@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
 
-class GoechargerConfig(AppConfig):
-    name = 'goeCharger'
+class GoechargerDjangoConfig(AppConfig):
+    name = 'goeCharger_django'
