@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 
 {% block page_content %}
-<h1>Hello, World!</h1>
+<h1>Goe Charger Status</h1>
 <p class="card-text">Car status: {{ car }}</p>
-<p class="card-text">amp status: {{ car }}</p>
-<p class="card-text">alw status: {{ car }}</p>
+<p class="card-text">Configured current: {{ amp }} <i>A</i></p>
+<p class="card-text">Charging status: {{ alw }}</p>
+<p class="card-text">Minimum charging current: {{ min_amp }} <i>{{ min_amp_unit }}</i></p>
 {% endblock %}
