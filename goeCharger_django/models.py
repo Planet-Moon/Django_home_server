@@ -15,7 +15,7 @@ class Car(models.Model):
     soc = models.FloatField(max_length=3) # in %
     created_on = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
-    categories = models.ManyToManyField('Car_Category', related_name='posts')
+    categories = models.ManyToManyField('Car_Category', related_name='cars')
 
 class Charger_Category(models.Model):
     def __str__(self):
@@ -32,4 +32,4 @@ class GoeCharger(models.Model):
     connected_car = models.ForeignKey(Car, on_delete=models.CASCADE)
     created_on = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
-    categories = models.ManyToManyField('Charger_Category', related_name='posts')
+    categories = models.ManyToManyField('Charger_Category', related_name='goe_chargers')
