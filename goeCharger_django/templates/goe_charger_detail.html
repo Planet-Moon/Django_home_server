@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block page_content %}
+
+<div class="col-md-8 offset-md-2">
+    <h1>{{ charger.title }}</h1>
+    <small>
+        IP: {{ charger.ipAddress }} |
+        {{ charger.created_on.date }} |&nbsp;
+        Categories:&nbsp;
+        {% for category in charger.categories.all %}
+        <a href="{% url 'goe_charger_category' category.name %}">
+            {{ category.name }}
+        </a>&nbsp;
+        {% endfor %}
+    </small><br>
+    <hr>
+    <p>Connected Car: {{ charger.connected_car}}</p>
+    <hr>
+    <h4>
+        {% if charger_data.connection %}
+        <p>Car status: {{charger_data.car}}</p>
+        <p>Current setting: {{charger_data.amp}} <i>A</i></p>
+        <p>Current power: {{charger_data.nrg}} <i>W</i></p>
+        <p>Charging status: {{charger_data.alw}}</p>
+        <p>Minimum current: {{charger_data.min_amp}} {{charger_data.min_amp_unit}}</p>
+        {% else %}
+        <p>Connection error: {{charger_data.error}}</p>
+        {% endif %}
+    </h4>
+    <hr>
+    <h4>Configuration</h4>
+    {% comment %}
+    {% url 'goe_charger_detail' charger.title %}
+    {% endcomment %}
+    {% comment %}
+    <form action="{% url 'goe_charger_detail' charger.title %}" method="post">
+        {% csrf_token %}
+        {{ car_form|crispy}}
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    {% endcomment %}
+    <form id="test-form" action="{% url 'goe_charger_detail' charger.title %}" method="post">
+        {% csrf_token %}
+        {{test_form|crispy}}
+        <button type="submit"  class="btn btn-secondary">Submit</button>
+    </form>
+    <div id="return-text" data-url="{% url 'goe_charger_detail' charger.title %}"></div>
+    <p id="status"></p>
+    <p id="lrm"></p>
+</div>
+
+{% load static %}
+
+<script type="text/javascript">
+    // Submit text on submit
+    console.log("hello")
+
+    $('#test-form').on('submit', function(event){
+        console.log("cancellable? "+event.cancelable)
+        event.preventDefault();
+        console.log("text submitted!")  // sanity check
+        edit_text_output()
+    });
+
+    function edit_text_output(){
+        console.log("edit_text_output is working!")
+        console.log($("#test-text").val())
+    }
+
+    $.ajax({
+        url: $("#return-text").attr("data-url"),
+        dataType: 'json',
+        success: function(data){
+            $("#return-text").html(data)
+        }
+    })
+</script>
+
+<script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+<script type="text/javascript" src="{% static '/js/mqtt.js' %}"></script>
+{% endblock %}
