@@ -1,52 +1,88 @@
+class messagesHandle{
+    constructor(n_messages){
+        this.n_messages = n_messages;
+        this.messages = new Array(n_messages);
+    };
 
-const clientId = 'mqttjs_' + Math.random().toString(16).substr(2, 8)
+    get getMessages(){
+        return this.messages;
+    };
 
-const host = 'ws://broker.hivemq.com:8000/mqtt'
+    addMessage(message){
+        if(this.messages.length >= this.n_messages){
+            this.messages.shift();}
+        this.messages.push(message);
+    };
+};
 
-const root_topic = "just_my_test_topic"
+// Create a client instance
+var host = "broker.hivemq.com";
+var port = 8000;
+var path = "/mqtt";
+var clientID = "server_mqtt_client";
+var topic = "/home_test_server/goe_charger";
+var client = new Paho.MQTT.Client(host,port,path,clientID);
 
-const options = {
-    keepalive: 30,
-    clientId: clientId,
-    protocolId: 'MQTT',
-    protocolVersion: 4,
-    clean: true,
-    reconnectPeriod: 1000,
-    connectTimeout: 30 * 1000,
-    will: {
-        topic: root_topic+'WillMsg',
-        payload: 'Connection Closed abnormally..!',
-        qos: 0,
-        retain: false
-    },
-    rejectUnauthorized: false
-}
+var Messages = new messagesHandle(5);
 
-console.log('connecting mqtt client')
-const client = mqtt.connect(host, options)
+console.log(Messages);
 
-client.on('error', (err) => {
-    console.log('Connection error: ', err)
-    client.end()
-    document.getElementById("status").innerHTML = "Status: error"
-})
+// set callback handlers
+client.onConnectionLost = onConnectionLost;
+client.onMessageArrived = onMessageArrived;
 
-client.on('reconnect', () => {
-console.log('Reconnecting...')
-})
+// connect the client
+client.connect({
+    onSuccess:onConnect
+});
 
-client.on('connect', () => {
-    console.log('Client connected:' + clientId)
-    client.subscribe(root_topic+"/#", { qos: 0 })
-    client.publish(root_topic, 'ws connection demo...!', { qos: 0, retain: false })
-    document.getElementById("status").innerHTML = "Mqtt Status: connected"
-})
+// called when the client connects
+function onConnect() {
+    // Once a connection has been made, make a subscription and send a message.
+    console.log("onConnect");
+    client.subscribe(topic+"/#");
+    payload = "First message";
+    client.send(topic, payload, qos=0, retained=true);
+};
 
-client.on('message', (topic, message, packet) => {
-    console.log('Received Message: ' + message.toString() + '\nOn topic: ' + topic)
-    document.getElementById("lrm").innerHTML = "Last received message: \""+message.toString()+"\", from topic: \""+topic+"\""
-})
+// called when the client loses its connection
+function onConnectionLost(responseObject) {
+    if (responseObject.errorCode !== 0) {
+        console.log("onConnectionLost: "+responseObject.errorMessage);
+    };
+};
 
-client.on('close', () => {
-console.log(clientId + ' disconnected')
-})
+// called when a message arrives
+function onMessageArrived(message) {
+    console.log("onMessageArrived: "+message.payloadString);
+    Messages.addMessage(message);
+    $("#messages-table").html("")
+    Messages.messages.forEach( element => {
+        $("#messages-table").prepend("<tr><th>"+element.destinationName+"</th><th>"+element.payloadString+"</th></tr>");
+    });
+};
+
+$(document).ready(function() {
+    var counter = 0;
+    setInterval(function() {
+        client.send(topic+"/subtopic", String(counter), qos=0, retained=true);
+        counter++;
+    }, 2000)
+});
+
+$('#test-form').on('submit', (event) => {
+    event.preventDefault();
+    input_text = $('#test-text').val();
+    console.log("text ("+input_text+") submitted!");
+    $("#return-text").html(input_text);
+});
+
+$('#toggle-charging-form').on('submit', (event) => {
+    event.preventDefault();
+    if(charging_state){
+        $("#btn-toggle-charging").html("Stop charging");
+    }
+    else{
+        $("#btn-toggle-charging").html("Charge");
+    }
+});

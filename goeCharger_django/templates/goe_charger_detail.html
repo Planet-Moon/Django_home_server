@@ -19,13 +19,13 @@
     <hr>
     <h4>
         {% if charger_data.connection %}
-        <p>Car status: {{charger_data.car}}</p>
-        <p>Current setting: {{charger_data.amp}} <i>A</i></p>
-        <p>Current power: {{charger_data.nrg}} <i>W</i></p>
-        <p>Charging status: {{charger_data.alw}}</p>
-        <p>Minimum current: {{charger_data.min_amp}} {{charger_data.min_amp_unit}}</p>
+        <p id="car">Car status: {{charger_data.car}}</p>
+        <p id="amp">Current setting: {{charger_data.amp}} <i>A</i></p>
+        <p id="nrg">Current power: {{charger_data.nrg}} <i>W</i></p>
+        <p id="alw">Charging status: {{charger_data.alw}}</p>
+        <p id="min-amp">Minimum current: {{charger_data.min_amp}} {{charger_data.min_amp_unit}}</p>
         {% else %}
-        <p>Connection error: {{charger_data.error}}</p>
+        <p id="connection-error">Connection error: {{charger_data.error}}</p>
         {% endif %}
     </h4>
     <hr>
@@ -45,17 +45,31 @@
         {{test_form|crispy}}
         <button type="submit"  class="btn btn-secondary">Submit</button>
     </form>
-    <div id="return-text" data-url="{% url 'goe_charger_detail' charger.title %}"></div>
-    <p id="status"></p>
-    <p id="lrm"></p>
+    <form id="toggle-charging-form" method="post">
+        {% csrf_token %}
+        <button id="btn-toggle-charging" type="submit" class="btn btn-primary">Charge</button>
+    </form>
+    <hr>
+    <h4>Messages</h4>
+    <div class="container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Topic</th>
+                    <th>Payload</th>
+                </tr>
+            </thead>
+            <tbody id="messages-table">
+            </tbody>
+        </table>
+    </div>
 </div>
 
 {% load static %}
 
 <script type="text/javascript">
     // Submit text on submit
-    console.log("hello")
-
+    /*
     $('#test-form').on('submit', function(event){
         console.log("cancellable? "+event.cancelable)
         event.preventDefault();
@@ -75,8 +89,28 @@
             $("#return-text").html(data)
         }
     })
+    */
 </script>
 
-<script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
-<script type="text/javascript" src="{% static '/js/mqtt.js' %}"></script>
+<script type="text/javascript">
+var subtopic = "{{charger.title}}"
+var charging_state = "{{charger_data.alw|safe}}";
+if(charging_state = "charging"){
+    charging_state = true;
+}
+else{
+    charging_state = false;
+}
+console.log("charging_state is " + charging_state);
+if(charging_state){
+    $("#btn-toggle-charging").html("Stop charging")
+}
+else{
+    $("#btn-toggle-charging").html("Charge")
+}
+//<script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
+<script type="text/javascript" src="{% static '/js/mqtt.js' %}" defer></script>
 {% endblock %}
