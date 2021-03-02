@@ -45,7 +45,7 @@ def goe_charger_detail(request,title):
 
     if True:
         try:
-            charger = goeCharger("http://"+goe_charger.ipAddress)
+            charger = goeCharger("http://"+goe_charger.ipAddress,"/home_test_server/goe_charger/"+title,"broker.hivemq.com",1883)
 
 
             if int(charger.car) > 1:
