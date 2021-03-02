@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
+{% load static %}
 {% block page_content %}
 
 <div class="col-md-8 offset-md-2">
-    <h1>{{ charger.title }}</h1>
+    <h1 id="charger-name">{{ charger.title }}</h1>
     <small>
         IP: {{ charger.ipAddress }} |
         {{ charger.created_on.date }} |&nbsp;
@@ -43,8 +44,9 @@
     <form id="test-form" action="{% url 'goe_charger_detail' charger.title %}" method="post">
         {% csrf_token %}
         {{test_form|crispy}}
-        <button type="submit"  class="btn btn-secondary">Submit</button>
+        <button type="submit" class="btn btn-secondary">Submit</button>
     </form>
+    <br>
     <form id="toggle-charging-form" method="post">
         {% csrf_token %}
         <button id="btn-toggle-charging" type="submit" class="btn btn-primary">Charge</button>
@@ -65,37 +67,11 @@
     </div>
 </div>
 
-{% load static %}
 
-<script type="text/javascript">
-    // Submit text on submit
-    /*
-    $('#test-form').on('submit', function(event){
-        console.log("cancellable? "+event.cancelable)
-        event.preventDefault();
-        console.log("text submitted!")  // sanity check
-        edit_text_output()
-    });
-
-    function edit_text_output(){
-        console.log("edit_text_output is working!")
-        console.log($("#test-text").val())
-    }
-
-    $.ajax({
-        url: $("#return-text").attr("data-url"),
-        dataType: 'json',
-        success: function(data){
-            $("#return-text").html(data)
-        }
-    })
-    */
-</script>
-
-<script type="text/javascript">
-var subtopic = "{{charger.title}}"
+<script type="text/javascript" defer>
+var charger_name = "{{charger.title|safe}}"
 var charging_state = "{{charger_data.alw|safe}}";
-if(charging_state = "charging"){
+if(charging_state == "charging"){
     charging_state = true;
 }
 else{
