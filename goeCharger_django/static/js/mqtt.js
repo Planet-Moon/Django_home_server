@@ -58,18 +58,18 @@ function onMessageArrived(message) {
     Messages.messages.forEach( element => {
         $("#messages-table").prepend("<tr><th>"+element.destinationName+"</th><th>"+element.payloadString+"</th></tr>");
     });
+    var receivedData = ""
     try{
         receivedData = JSON.parse(message.payloadString);}
     catch(e){}
-    console.log(receivedData);
+    console.log("receivedData: "+receivedData);
 };
 
 $(document).ready(() => {
     var counter = 0;
     setInterval(() => {
         if(mqttClient.isConnected()){
-            ret_val = mqttClient.send(topic+"/subtopic", String(counter), qos=0, retained=true);
-            console.log(ret_val);
+            mqttClient.send(topic+"/subtopic", String(counter), qos=0, retained=true);
             counter++;
         }
     }, 10000)
