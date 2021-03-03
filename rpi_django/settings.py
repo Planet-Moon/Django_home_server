@@ -29,7 +29,8 @@ ALLOWED_HOSTS = [
   'localhost',
   '127.0.0.1',
   '192.168.178.43',
-  '192.168.178.107']
+  '192.168.178.107',
+  'rpigoe.local',]
 
 
 # Application definition
