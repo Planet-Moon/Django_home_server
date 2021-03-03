@@ -20,10 +20,10 @@ class CarForm(forms.Form):
     pass
 
 class TestForm(forms.Form):
-    text = forms.CharField(max_length=30,widget=forms.TextInput(attrs={
+    text = forms.CharField(widget=forms.TextInput(attrs={
                 'id': 'test-text',
                 'required': True,
-                'placeholder': 'Say something...'}))
+                'placeholder': 'Publish something...'}))
 
 # To make values default do this in views.py:
 #
