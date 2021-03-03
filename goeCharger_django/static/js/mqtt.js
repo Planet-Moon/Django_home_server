@@ -42,7 +42,7 @@ function onConnect() {
     // Once a connection has been made, make a subscription and send a message.
     console.log("onConnect");
     mqttClient.subscribe(topic+"/#");
-    payload = "First message";
+    payload = "Client connected successfully";
     mqttClient.send(topic, payload, qos=0, retained=true);
 };
 
@@ -59,13 +59,50 @@ function onMessageArrived(message) {
     Messages.addMessage(message);
     $("#messages-table").html("")
     Messages.messages.forEach( element => {
-        $("#messages-table").prepend("<tr><th>"+element.destinationName+"</th><th>"+element.payloadString+"</th></tr>");
+        $("#messages-table").prepend(
+            "<tr><th>"+element.destinationName+
+            "</th><th>"+element.payloadString+
+            "</th><th>"+element.qos+
+            "</th><th>"+element.retained+
+            "</th></tr>");
     });
     var receivedData = ""
     try{
         receivedData = JSON.parse(message.payloadString);}
     catch(e){}
     console.log("receivedData: "+receivedData);
+    var keys = Object.keys(receivedData);
+    console.log("keys: "+keys);
+    messageType = keys[0];
+    if(messageType == "status"){
+        var status = receivedData.status;
+        var args = receivedData.args;
+        if(status == "car"){
+            function Car_status(args){
+                if(args > 1){
+                    return "connected";
+                }
+                return "not connected";
+            }
+            car_status = Car_status();
+            $("#car").html("Car status: " + car_status);
+        }
+        else if(status == "amp"){
+            $("#amp").html("Current setting: " + args + " <i>A</i>");
+        }
+        else if(status == "nrg"){
+            $("#nrg").html("Current power: " + args + " <i>W</i>");
+        }
+        else if(status == "alw"){
+            $("#alw").html("Charging status: " + args);
+        }
+        else if(status == "min-amp"){
+            $("#min-amp").html("Minimum current: " + args + " <i>A</i>");
+        }
+    }
+    args = receivedData.args;
+    console.log("messageType: "+messageType);
+    console.log("args: "+args);
 };
 
 $(document).ready(() => {
