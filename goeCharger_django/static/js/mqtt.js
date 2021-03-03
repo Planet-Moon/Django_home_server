@@ -84,7 +84,14 @@ $('#test-form').on('submit', event => {
 
 $('#toggle-charging-form').on('submit', event => {
     event.preventDefault();
-    var payload = {command:"enable","args":!charging_state}
+    var args = undefined;
+    if(charging_state){
+        args = 0;
+    }
+    else{
+        args = 1;
+    }
+    var payload = {command:"alw","args":args}
     payload = JSON.stringify(payload)
     if(charging_state){
         $("#btn-toggle-charging").html("Stop charging");
