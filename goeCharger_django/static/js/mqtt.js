@@ -70,9 +70,7 @@ function onMessageArrived(message) {
     try{
         receivedData = JSON.parse(message.payloadString);}
     catch(e){}
-    console.log("receivedData: "+receivedData);
     var keys = Object.keys(receivedData);
-    console.log("keys: "+keys);
     messageType = keys[0];
     if(messageType == "status"){
         var status = receivedData.status;
@@ -100,9 +98,6 @@ function onMessageArrived(message) {
             $("#min-amp").html("Minimum current: " + args + " <i>A</i>");
         }
     }
-    args = receivedData.args;
-    console.log("messageType: "+messageType);
-    console.log("args: "+args);
 };
 
 $(document).ready(() => {
