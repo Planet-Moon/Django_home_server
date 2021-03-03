@@ -23,7 +23,7 @@ var host = "192.168.178.107";
 var port = 9002
 var path = ""
 var clientID = "server_mqtt_client";
-var topic = "/home_test_server/goe_charger";
+var topic = "/home_test_server/goe_charger/"+charger_name;
 var mqttClient = new Paho.MQTT.Client(host,port,path,clientID);
 
 var Messages = new messagesHandle(5);
@@ -43,7 +43,7 @@ function onConnect() {
     console.log("onConnect");
     mqttClient.subscribe(topic+"/#");
     payload = "Client connected successfully";
-    mqttClient.send(topic, payload, qos=0, retained=true);
+    mqttClient.send(topic, payload, qos=0, retained=false);
 };
 
 // called when the client loses its connection
@@ -115,11 +115,12 @@ $(document).ready(() => {
     }, 10000)
 });
 
-$('#test-form').on('submit', event => {
+$('#custom-publish-form').on('submit', event => {
     event.preventDefault();
     input_text = $('#test-text').val();
     console.log("text ("+input_text+") submitted!");
-    $("#return-text").html(input_text);
+    payload = input_text;
+    mqttClient.send(topic, payload, qos=0, retained=false)
 });
 
 $('#toggle-charging-form').on('submit', event => {
@@ -140,6 +141,6 @@ $('#toggle-charging-form').on('submit', event => {
         $("#btn-toggle-charging").html("Charge");
     }
     if(mqttClient.isConnected()){
-        mqttClient.send(topic+"/"+charger_name, payload, qos=0, retained=true)
+        mqttClient.send(topic, payload, qos=0, retained=true)
     }
 });
