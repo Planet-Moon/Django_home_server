@@ -3,7 +3,7 @@
 {% load static %}
 {% block page_content %}
 
-<div class="col-md-8 offset-md-2">
+<div class="col-md-10 offset-md-1">
     <h1 id="charger-name">{{ charger.title }}</h1>
     <small>
         IP: {{ charger.ipAddress }} |
@@ -18,19 +18,14 @@
     <hr>
     <p>Connected Car: {{ charger.connected_car}}</p>
     <hr>
-    <h4>
-        {% if charger_data.connection %}
-        <p id="car">Car status: {{charger_data.car}}</p>
-        <p id="amp">Current setting: {{charger_data.amp}} <i>A</i></p>
-        <p id="nrg">Current power: {{charger_data.nrg}} <i>W</i></p>
-        <p id="alw">Charging status: {{charger_data.alw}}</p>
-        <p id="min-amp">Minimum current: {{charger_data.min_amp}} {{charger_data.min_amp_unit}}</p>
-        {% else %}
-        <p id="connection-error">Connection error: {{charger_data.error}}</p>
-        {% endif %}
-    </h4>
+    <h3>Status</h3>
+    <h5 id="car">Car status: {{charger_data.car}}</h5>
+    <h5 id="amp">Current setting: {{charger_data.amp}} <i>A</i></h5>
+    <h5 id="nrg">Current power: {{charger_data.nrg}} <i>W</i></h5>
+    <h5 id="alw">Charging status: {{charger_data.alw}}</h5>
+    <h5 id="min-amp">Minimum current: {{charger_data.min_amp}} {{charger_data.min_amp_unit}}</h5>
     <hr>
-    <h4>Configuration</h4>
+    <h3>Configuration</h3>
     {% comment %}
     {% url 'goe_charger_detail' charger.title %}
     {% endcomment %}
@@ -59,6 +54,8 @@
                 <tr>
                     <th>Topic</th>
                     <th>Payload</th>
+                    <th>QOS</th>
+                    <th>Retained</th>
                 </tr>
             </thead>
             <tbody id="messages-table">
