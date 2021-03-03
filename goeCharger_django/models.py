@@ -32,4 +32,5 @@ class GoeCharger(models.Model):
     connected_car = models.ForeignKey(Car, on_delete=models.CASCADE)
     created_on = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
+    thread_running = models.BooleanField(default=False)
     categories = models.ManyToManyField('Charger_Category', related_name='goe_chargers')
