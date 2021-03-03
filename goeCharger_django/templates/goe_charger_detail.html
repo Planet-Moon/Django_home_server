@@ -36,7 +36,7 @@
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
     {% endcomment %}
-    <form id="test-form" action="{% url 'goe_charger_detail' charger.title %}" method="post">
+    <form id="custom-publish-form" action="{% url 'goe_charger_detail' charger.title %}" method="post">
         {% csrf_token %}
         {{test_form|crispy}}
         <button type="submit" class="btn btn-secondary">Submit</button>
