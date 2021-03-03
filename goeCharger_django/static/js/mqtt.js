@@ -16,9 +16,12 @@ class messagesHandle{
 };
 
 // Create a client instance
-var host = "broker.hivemq.com";
-var port = 8000;
-var path = "/mqtt";
+// var host = "broker.hivemq.com";
+// var port = 8000;
+// var path = "/mqtt";
+var host = "192.168.178.107";
+var port = 9002
+var path = ""
 var clientID = "server_mqtt_client";
 var topic = "/home_test_server/goe_charger";
 var mqttClient = new Paho.MQTT.Client(host,port,path,clientID);
@@ -69,8 +72,8 @@ $(document).ready(() => {
     var counter = 0;
     setInterval(() => {
         if(mqttClient.isConnected()){
-            mqttClient.send(topic+"/subtopic", String(counter), qos=0, retained=true);
-            counter++;
+            // mqttClient.send(topic+"/subtopic", String(counter), qos=0, retained=true);
+            // counter++;
         }
     }, 10000)
 });
