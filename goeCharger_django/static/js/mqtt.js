@@ -97,30 +97,32 @@ function onMessageArrived(message) {
                 $("#btn-test-text").prop("disabled", true);
             }
         }
-        else if(status == "car"){
-            args = parseInt(args);
-            function Car_status(args_){
-                if(args_ > 1){
-                    return "connected";
+        else if(charger_http_connected){
+            if(status == "car"){
+                args = parseInt(args);
+                function Car_status(args_){
+                    if(args_ > 1){
+                        return "connected";
+                    }
+                    else{
+                        return "not connected";
+                    }
                 }
-                else{
-                    return "not connected";
-                }
+                car_status = Car_status(args);
+                $("#car").html("Car status: " + car_status);
             }
-            car_status = Car_status(args);
-            $("#car").html("Car status: " + car_status);
-        }
-        else if(status == "amp"){
-            $("#amp").html("Current setting: " + args + " <i>A</i>");
-        }
-        else if(status == "nrg"){
-            $("#nrg").html("Current power: " + args + " <i>W</i>");
-        }
-        else if(status == "alw"){
-            $("#alw").html("Charging status: " + args);
-        }
-        else if(status == "min-amp"){
-            $("#min-amp").html("Minimum current: " + args + " <i>A</i>");
+            else if(status == "amp"){
+                $("#amp").html("Current setting: " + args + " <i>A</i>");
+            }
+            else if(status == "nrg"){
+                $("#nrg").html("Current power: " + args + " <i>W</i>");
+            }
+            else if(status == "alw"){
+                $("#alw").html("Charging status: " + args);
+            }
+            else if(status == "min-amp"){
+                $("#min-amp").html("Minimum current: " + args + " <i>A</i>");
+            }
         }
     }
 };
