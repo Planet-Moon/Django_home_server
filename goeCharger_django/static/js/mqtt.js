@@ -26,7 +26,8 @@ var clientID = "server_mqtt_client";
 var topic = "/home_test_server/goe_charger/"+charger_name;
 var mqttClient = new Paho.MQTT.Client(host,port,path,clientID);
 
-var Messages = new messagesHandle(5);
+var Messages = new messagesHandle(10);
+var charger_http_connected = undefined;
 
 // set callback handlers
 mqttClient.onConnectionLost = onConnectionLost;
@@ -55,7 +56,7 @@ function onConnectionLost(responseObject) {
 
 // called when a message arrives
 function onMessageArrived(message) {
-    console.log("onMessageArrived: "+message.payloadString);
+    console.log("onMessageArrived: "+message.destinationName+" "+message.payloadString+" "+message.qos+" "+message.retained);
     Messages.addMessage(message);
     $("#messages-table").html("")
     Messages.messages.forEach( element => {
@@ -70,19 +71,43 @@ function onMessageArrived(message) {
     try{
         receivedData = JSON.parse(message.payloadString);}
     catch(e){}
-    var keys = Object.keys(receivedData);
-    messageType = keys[0];
+    var topic = message.destinationName;
+    var topics = topic.split("/");
+    var messageType = topics[topics.length - 2];
     if(messageType == "status"){
-        var status = receivedData.status;
-        var args = receivedData.args;
-        if(status == "car"){
-            function Car_status(args){
-                if(args > 1){
+        var status = topics[topics.length - 1];
+        var args = message.payloadString;
+        if(status == "httpc"){
+            args = (args == "True");
+            if(args){
+                charger_http_connected = true;
+                $("#httpc").html("Charger connected");
+                $("#btn-toggle-charging").prop("disabled", false);
+                $("#btn-test-text").prop("disabled", false);
+            }
+            else{
+                charger_http_connected = false;
+                $("#httpc").html("Charger disconnected");
+                $("#car").html("");
+                $("#amp").html("");
+                $("#nrg").html("");
+                $("#alw").html("");
+                $("#min-amp").html("");
+                $("#btn-toggle-charging").prop("disabled", true);
+                $("#btn-test-text").prop("disabled", true);
+            }
+        }
+        else if(status == "car"){
+            args = parseInt(args);
+            function Car_status(args_){
+                if(args_ > 1){
                     return "connected";
                 }
-                return "not connected";
+                else{
+                    return "not connected";
+                }
             }
-            car_status = Car_status();
+            car_status = Car_status(args);
             $("#car").html("Car status: " + car_status);
         }
         else if(status == "amp"){
@@ -127,8 +152,6 @@ $('#toggle-charging-form').on('submit', event => {
     else{
         args = 1;
     }
-    var payload = {command:"alw","args":args}
-    payload = JSON.stringify(payload)
     if(charging_state){
         $("#btn-toggle-charging").html("Stop charging");
     }
@@ -136,6 +159,6 @@ $('#toggle-charging-form').on('submit', event => {
         $("#btn-toggle-charging").html("Charge");
     }
     if(mqttClient.isConnected()){
-        mqttClient.send(topic, payload, qos=0, retained=true)
+        mqttClient.send(topic+"/command/alw", String(args), qos=0, retained=false)
     }
 });
