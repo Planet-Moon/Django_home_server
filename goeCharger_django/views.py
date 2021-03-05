@@ -5,11 +5,51 @@ from goeCharger_django.models import Car
 from goeCharger import GOE_Charger as goeCharger
 from goeCharger_django.forms import CarForm, TestForm
 
+
 import logging
 import threading
 import time
 
 logger = logging.getLogger(__name__)
+
+import paho.mqtt.client as mqtt
+class Server_MQttClient(object):
+    def __init__(self):
+        self.server_topic = "home_test_server"
+        self.client = mqtt.Client()
+        self.client.on_connect = self.onMQTTConnect
+        self.client.on_message = self.onMQTTMessage
+        self.client.on_publish = self.onMQTTPublish
+        self.client.connect_async("192.168.178.107")
+        self.client.loop_start()
+
+    def onMQTTMessage(self, client, userdata, msg):
+        topic = msg.topic
+        topics = topic.split("/")
+        payload = msg.payload.decode("utf-8")
+        logger.info(topic + ": " + payload)
+        if topics[3] == "command":
+            if topics[4] == "change_car":
+                charger = GoeCharger_model.objects.get(title=topics[-3])
+                try:
+                    change_car = Car.objects.get(title=payload)
+                except:
+                    return
+                charger.connected_car = change_car
+                charger.save()
+                self.client.publish("/".join(topics[:-1])+"/min-amp",charger.connected_car.power_min,qos=0,retain=True)
+            pass
+        else:
+            pass
+
+    def onMQTTConnect(self, client, userdata, flags, rc):
+        logger.info(str(client)+"Connected with result code "+str(rc))
+        self.client.subscribe(self.server_topic+"/#")
+        self.client.subscribe("$SYS/broker/clients/connected")
+
+    def onMQTTPublish(self, client, userdata, mid):
+        pass
+server_mqtt = Server_MQttClient()
 
 
 def reset_running():
@@ -43,11 +83,14 @@ def create_goe_instances():
         goe_charger_instance = goeCharger(
             name=charger.title,
             address="http://"+charger.ipAddress,
-            mqtt_topic="/home_test_server/goe_charger/"+charger.title,
+            mqtt_topic="home_test_server/goe_charger/"+charger.title,
             mqtt_broker="192.168.178.107",
             mqtt_port=1883)
         goe_chargers_instances.append(goe_charger_instance)
         GoeCharger_thread(goe_charger_instance).start()
+        charger_topic = "home_test_server/goe_charger/"+charger.title
+        server_mqtt.client.publish(charger_topic+"/status/connected_car",payload=charger.connected_car.title,qos=0,retain=True)
+        server_mqtt.client.publish(charger_topic+"/command/min-amp",payload=charger.connected_car.power_min,qos=0,retain=False)
         time.sleep(1)
 create_goe_instances()
 
