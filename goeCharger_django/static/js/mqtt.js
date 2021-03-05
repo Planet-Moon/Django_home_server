@@ -23,11 +23,12 @@ var host = "192.168.178.107";
 var port = 9002
 var path = ""
 var clientID = "server_mqtt_client";
-var topic = "/home_test_server/goe_charger/"+charger_name;
+var topic = "home_test_server/goe_charger/"+charger_name;
 var mqttClient = new Paho.MQTT.Client(host,port,path,clientID);
 
 var Messages = new messagesHandle(10);
-var charger_http_connected = undefined;
+var charger_http_connected = true;
+var charging_state = undefined;
 
 // set callback handlers
 mqttClient.onConnectionLost = onConnectionLost;
@@ -73,13 +74,12 @@ function onMessageArrived(message) {
     catch(e){}
     var topic = message.destinationName;
     var topics = topic.split("/");
-    var messageType = topics[topics.length - 2];
+    var messageType = topics[3];
     if(messageType == "status"){
-        var status = topics[topics.length - 1];
-        var args = message.payloadString;
-        if(status == "httpc"){
-            args = (args == "True");
-            if(args){
+        var p_Name = topics[4];
+        var p_Value = message.payloadString;
+        if(p_Name == "httpc"){
+            if(p_Value == "True"){
                 charger_http_connected = true;
                 $("#httpc").html("Charger connected");
                 $("#btn-toggle-charging").prop("disabled", false);
@@ -96,10 +96,15 @@ function onMessageArrived(message) {
                 $("#btn-toggle-charging").prop("disabled", true);
                 $("#btn-test-text").prop("disabled", true);
             }
+            return
         }
         else if(charger_http_connected){
-            if(status == "car"){
-                args = parseInt(args);
+            if(p_Name == "connected_car"){
+                $("#connected_car").html("Connected car: "+p_Value);
+                return
+            }
+            else if(p_Name == "car"){
+                p_Value = parseInt(p_Value);
                 function Car_status(args_){
                     if(args_ > 1){
                         return "connected";
@@ -108,23 +113,37 @@ function onMessageArrived(message) {
                         return "not connected";
                     }
                 }
-                car_status = Car_status(args);
+                car_status = Car_status(p_Value);
                 $("#car").html("Car status: " + car_status);
+                return
             }
-            else if(status == "amp"){
-                $("#amp").html("Current setting: " + args + " <i>A</i>");
+            else if(p_Name == "amp"){
+                $("#amp").html("Current setting: " + p_Value + " <i>A</i>");
+                return
             }
-            else if(status == "nrg"){
-                $("#nrg").html("Current power: " + args + " <i>W</i>");
+            else if(p_Name == "nrg"){
+                $("#nrg").html("Current power: " + p_Value + " <i>W</i>");
+                return
             }
-            else if(status == "alw"){
-                $("#alw").html("Charging status: " + args);
+            else if(p_Name == "alw"){
+                $("#alw").html("Charging status: " + p_Value);
+                if(p_Value==="True"){
+                    charging_state = true;
+                    $("#btn-toggle-charging").html("Stop charging");
+                }
+                else{
+                    charging_state = false;
+                    $("#btn-toggle-charging").html("Charge");
+                }
+                return
             }
-            else if(status == "min-amp"){
-                $("#min-amp").html("Minimum current: " + args + " <i>A</i>");
+            else if(p_Name == "min-amp"){
+                $("#min-amp").html("Minimum current: " + p_Value + " <i>A</i>");
+                return
             }
         }
     }
+    return
 };
 
 $(document).ready(() => {
@@ -141,26 +160,22 @@ $('#custom-publish-form').on('submit', event => {
     event.preventDefault();
     input_text = $('#test-text').val();
     console.log("text ("+input_text+") submitted!");
-    payload = input_text;
-    mqttClient.send(topic, payload, qos=0, retained=false)
+    text = input_text.split(" ");
+    payloadString = text.slice(1).join(" ")
+    if(text.length > 1){
+        mqttClient.send(topic+"/command/"+text[0], payloadString, qos=0, retained=false)}
 });
 
 $('#toggle-charging-form').on('submit', event => {
     event.preventDefault();
     var args = undefined;
     if(charging_state){
-        args = 0;
+        args = "False";
     }
     else{
-        args = 1;
-    }
-    if(charging_state){
-        $("#btn-toggle-charging").html("Stop charging");
-    }
-    else{
-        $("#btn-toggle-charging").html("Charge");
+        args = "True";
     }
     if(mqttClient.isConnected()){
-        mqttClient.send(topic+"/command/alw", String(args), qos=0, retained=false)
+        mqttClient.send(topic+"/command/alw", args, qos=0, retained=false)
     }
 });
