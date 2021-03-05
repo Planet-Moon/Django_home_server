@@ -28,6 +28,8 @@ class Server_MQttClient(object):
         topics = topic.split("/")
         payload = msg.payload.decode("utf-8")
         logger.info(topic + ": " + payload)
+        if len(topics) < 4:
+            return
         if topics[3] == "command":
             if topics[4] == "change_car":
                 charger = GoeCharger_model.objects.get(title=topics[-3])
