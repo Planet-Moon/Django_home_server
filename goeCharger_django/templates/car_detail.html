@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block page_content %}
+
+<div class="col-md-10 offset-md-1">
+    <h1>{{ car.title }}</h1>
+    <small>
+        {{ car.created_on.date }} |&nbsp;
+        Categories:&nbsp;
+        {% for category in car.categories.all %}
+        <a href="{% url 'car_category' category.name %}">
+            {{ category.name }}
+        </a>&nbsp;
+        {% endfor %}
+    </small><br>
+    <hr>
+    <h5> I<sub>min</sub>: {{car.power_min}} <i>A</i></h5>
+    <h5> I<sub>max</sub>: {{car.power_max}} <i>A</i></h5>
+    <h5> Battery capacity: {{car.battery_capacity}} <i>Wh</i></h5>
+    <hr>
+    <h3>Connected chargers:</h3>
+    {% for charger in connected_chargers %}
+    <a href="{% url 'goe_charger_detail' charger.title %}">{{ charger.title }}</a>
+    {% endfor %}
+</div>
+{% endblock %}

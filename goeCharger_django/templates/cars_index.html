@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block page_content %}
+<h1>Cars</h1>
+<div class="row">
+    {% for car in cars %}
+    <div class="col-md-3">
+        <div class="card mb-2">
+            <div class="card-body">
+                <h5 class="card-title">{{ car.title }}</h5>
+                <hr>
+                <h6 class="card-subtitle mb-2 text-muted">{{car.battery_capacity}} <i>Wh</i></h6>
+                <div class="card-text">
+                    <p>I<sub>min</sub>: {{car.power_min}} <i>A</i></p>
+                    <p>I<sub>max</sub>: {{car.power_max}} <i>A</i></p>
+                </div>
+                <small class="card-subtitle mb-2 text-muted">Last change: {{car.last_modified}}</small>
+                <br>
+                <a href="{% url 'car_detail' car.title %}" class="btn btn-primary btn-sm">Details</a>&nbsp;
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

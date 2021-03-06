@@ -116,6 +116,23 @@ def goe_charger_category(request, category):
     return render(request, "goe_charger_category.html", context)
 
 
+def cars_index(request):
+    cars = Car.objects.all()
+    return render(request, "cars_index.html", context={"cars": cars})
+
+
+def car_detail(request,title):
+    car = Car.objects.get(title=title)
+    connected_chargers = GoeCharger_model.objects.filter(connected_car=car)
+    return render(request, "car_detail.html", context={"car": car, "connected_chargers": connected_chargers})
+
+def car_category(request,category):
+    cars = Car.objects.filter(categories__name__contains=category).order_by(
+        "-created_on"
+    )
+    context = {"category": category, "cars": cars}
+    return render(request, "cars_category.html", context)
+
 
 def goe_charger_detail(request,title):
     goe_charger = GoeCharger_model.objects.get(title=title)

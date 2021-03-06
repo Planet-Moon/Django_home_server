@@ -100,7 +100,7 @@ function onMessageArrived(message) {
         }
         else if(charger_http_connected){
             if(p_Name == "connected_car"){
-                $("#connected_car").html("Connected car: "+p_Value);
+                $("#connected_car").html("Connected car: "+p_Value+" <a href=\"../../car/"+p_Value+"\">Info</a>");
                 return
             }
             else if(p_Name == "car"){
@@ -118,11 +118,11 @@ function onMessageArrived(message) {
                 return
             }
             else if(p_Name == "amp"){
-                $("#amp").html("Current setting: " + p_Value + " <i>A</i>");
+                $("#amp").html("I: " + p_Value + " <i>A</i>");
                 return
             }
             else if(p_Name == "nrg"){
-                $("#nrg").html("Current power: " + p_Value + " <i>W</i>");
+                $("#nrg").html("P: " + p_Value + " <i>W</i>");
                 return
             }
             else if(p_Name == "alw"){
@@ -138,7 +138,7 @@ function onMessageArrived(message) {
                 return
             }
             else if(p_Name == "min-amp"){
-                $("#min-amp").html("Minimum current: " + p_Value + " <i>A</i>");
+                $("#min-amp").html("I<sub>min</sub>: " + p_Value + " <i>A</i>");
                 return
             }
         }
