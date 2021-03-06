@@ -22,7 +22,7 @@ class messagesHandle{
 var host = "192.168.178.107";
 var port = 9002
 var path = ""
-var clientID = "server_mqtt_client";
+var clientID = "goe_client"+makeid(5);
 var topic = "home_test_server/goe_charger/"+charger_name;
 var mqttClient = new Paho.MQTT.Client(host,port,path,clientID);
 
@@ -100,7 +100,7 @@ function onMessageArrived(message) {
         }
         else if(charger_http_connected){
             if(p_Name == "connected_car"){
-                $("#connected_car").html("Connected car: "+p_Value+" <a href=\"../../car/"+p_Value+"\">Info</a>");
+                $("#connected_car").html("Connected car: <a href=\"../../car/"+p_Value+"\">"+p_Value+"</a>");
                 return
             }
             else if(p_Name == "car"){
