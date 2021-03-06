@@ -1,24 +1,25 @@
 {% extends "base.html" %}
 {% block page_content %}
 <h1>GOE Chargers</h1>
-    <div class="row">
-        {% for charger in chargers %}
-        <div class="col-md-6">
-            <div class="card mb-2">
-                <div class="card-body">
-                    <h5 class="card-title">{{ charger.title }}</h5>
-                    <hr>
-                    <h6 class="card-subtitle mb-2 text-muted">{{charger.ipAddress}}</h6>
-                    <div class="card-text">
-                        <p>Connected to {{charger.connected_car}}</p>
-                    </div>
-                    <small class="card-subtitle mb-2 text-muted">Last change: {{charger.last_modified}}</small>
-                    <br>
-                    <a href="{% url 'goe_charger_detail' charger.title %}" class="btn btn-primary btn-sm">Details</a>&nbsp;
-                    <a href="http://{{charger.ipAddress}}/status" class="btn btn-secondary btn-sm">Direct link</a>
+<div class="row">
+    {% for charger in chargers %}
+    <div class="col-md-6">
+        <div class="card mb-2">
+            <div class="card-body">
+                <h5 class="card-title">{{ charger.title }}</h5>
+                <hr>
+                <h6 class="card-subtitle mb-2 text-muted">{{charger.ipAddress}}</h6>
+                <div class="card-text">
+                    <p>Connected to {{charger.connected_car}}</p>
                 </div>
+                <small class="card-subtitle mb-2 text-muted">Last change: {{charger.last_modified}}</small>
+                <br>
+                <a href="{% url 'goe_charger_detail' charger.title %}" class="btn btn-primary btn-sm">Details</a>&nbsp;
+                <a href="http://{{charger.ipAddress}}/status" class="btn btn-secondary btn-sm">Direct link</a>
             </div>
         </div>
     </div>
     {% endfor %}
+</div>
+<a href="{% url 'cars_index' %}"><h1>Cars</h1></a>
 {% endblock %}

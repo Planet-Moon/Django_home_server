@@ -16,15 +16,15 @@
         {% endfor %}
     </small><br>
     <hr>
-    <p id="connected_car">Connected Car: None</p>
+    <p id="connected_car">Connected Car: None <a href="#">Info</a></p>
     <hr>
     <h3>Status</h3>
     <h5 id="httpc"></h5>
     <h5 id="car">Car status: {{charger_data.car}}</h5>
-    <h5 id="amp">Current setting: {{charger_data.amp}} <i>A</i></h5>
-    <h5 id="nrg">Current power: {{charger_data.nrg}} <i>W</i></h5>
+    <h5 id="amp">I: {{charger_data.amp}} <i>A</i></h5>
+    <h5 id="nrg">P: {{charger_data.nrg}} <i>W</i></h5>
     <h5 id="alw">Charging status: {{charger_data.alw}}</h5>
-    <h5 id="min-amp">Minimum current: {{charger_data.min_amp}} {{charger_data.min_amp_unit}}</h5>
+    <h5 id="min-amp">I<sub>min</sub>: {{charger_data.min_amp}} {{charger_data.min_amp_unit}}</h5>
     <hr>
     <h3>Configuration</h3>
     {% comment %}
