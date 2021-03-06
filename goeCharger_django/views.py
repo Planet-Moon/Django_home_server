@@ -32,14 +32,15 @@ class Server_MQttClient(object):
             return
         if topics[3] == "command":
             if topics[4] == "change_car":
-                charger = GoeCharger_model.objects.get(title=topics[-3])
+                charger = GoeCharger_model.objects.get(title=topics[2])
                 try:
                     change_car = Car.objects.get(title=payload)
                 except:
                     return
                 charger.connected_car = change_car
                 charger.save()
-                self.client.publish("/".join(topics[:-1])+"/min-amp",charger.connected_car.power_min,qos=0,retain=True)
+                self.client.publish("/".join(topics[:-1])+"/min-amp",charger.connected_car.power_min,qos=0,retain=False)
+                self.client.publish("/".join(topics[:-2])+"/status/connected_car",charger.connected_car.title,qos=0,retain=True)
             pass
         else:
             pass
