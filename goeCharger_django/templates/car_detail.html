@@ -19,9 +19,11 @@
     <h5> I<sub>max</sub>: {{car.power_max}} <i>A</i></h5>
     <h5> Battery capacity: {{car.battery_capacity}} <i>Wh</i></h5>
     <hr>
+    {% if connected_chargers %}
     <h3>Connected chargers:</h3>
     {% for charger in connected_chargers %}
     <a href="{% url 'goe_charger_detail' charger.title %}">{{ charger.title }}</a>
     {% endfor %}
+    {% endif %}
 </div>
 {% endblock %}
