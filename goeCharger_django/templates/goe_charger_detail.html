@@ -3,66 +3,62 @@
 {% load static %}
 {% block page_content %}
 
-<div class="col-md-10 offset-md-1">
-    <h1 id="charger-name">{{ charger.title }}</h1>
-    <small>
-        IP: {{ charger.ipAddress }} |
-        {{ charger.created_on.date }} |&nbsp;
-        Categories:&nbsp;
-        {% for category in charger.categories.all %}
-        <a href="{% url 'goe_charger_category' category.name %}">
-            {{ category.name }}
-        </a>&nbsp;
-        {% endfor %}
-    </small><br>
-    <hr>
-    <p id="connected_car">Connected Car: None <a href="#">Info</a></p>
-    <hr>
-    <h3>Status</h3>
-    <h5 id="httpc"></h5>
-    <h5 id="car">Car status: {{charger_data.car}}</h5>
-    <h5 id="amp">I: {{charger_data.amp}} <i>A</i></h5>
-    <h5 id="nrg">P: {{charger_data.nrg}} <i>W</i></h5>
-    <h5 id="alw">Charging status: {{charger_data.alw}}</h5>
-    <h5 id="min-amp">I<sub>min</sub>: {{charger_data.min_amp}} {{charger_data.min_amp_unit}}</h5>
-    <hr>
-    <h3>Configuration</h3>
-    {% comment %}
-    {% url 'goe_charger_detail' charger.title %}
-    {% endcomment %}
-    {% comment %}
-    <form action="{% url 'goe_charger_detail' charger.title %}" method="post">
-        {% csrf_token %}
-        {{ car_form|crispy}}
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-    {% endcomment %}
-    <form id="custom-publish-form" action="{% url 'goe_charger_detail' charger.title %}" method="post">
-        {% csrf_token %}
-        {{test_form|crispy}}
-        <button id="btn-test-text" type="submit" class="btn btn-secondary">Submit</button>
-    </form>
-    <br>
-    <form id="toggle-charging-form" method="post">
-        {% csrf_token %}
-        <button id="btn-toggle-charging" type="submit" class="btn btn-primary">Charge</button>
-    </form>
-    <hr>
-    <h4>Messages</h4>
-    <div class="container">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Topic</th>
-                    <th>Payload</th>
-                    <th>QOS</th>
-                    <th>Retained</th>
-                </tr>
-            </thead>
-            <tbody id="messages-table">
-            </tbody>
-        </table>
-    </div>
+<h1 id="charger-name">{{ charger.title }}</h1>
+<small>
+    IP: {{ charger.ipAddress }} |
+    {{ charger.created_on.date }} |&nbsp;
+    Categories:&nbsp;
+    {% for category in charger.categories.all %}
+    <a href="{% url 'goe_charger_category' category.name %}">
+        {{ category.name }}
+    </a>&nbsp;
+    {% endfor %}
+</small><br>
+<hr>
+<p id="connected_car">Connected Car: None <a href="#">Info</a></p>
+<hr>
+<h3>Status</h3>
+<h5 id="httpc"></h5>
+<h5 id="car">Car status: </h5>
+<h5 id="amp">I: <i>A</i></h5>
+<h5 id="nrg">P: <i>W</i></h5>
+<h5 id="alw">Charging status: </h5>
+<h5 id="min-amp">I<sub>min</sub>: </h5>
+<hr>
+<h3>Configuration</h3>
+{% comment %}
+{% url 'goe_charger_detail' charger.title %}
+{% endcomment %}
+<form  id="change-car-form" class="form-inline" action="#" method="post">
+    {% csrf_token %}
+    {{car_form|crispy}}
+</form>
+<br>
+<form id="custom-publish-form" class="form-inline"  action="#" method="post">
+    {% csrf_token %}
+    {{publish_form|crispy}}
+    <button id="btn-test-text" type="submit" class="btn btn-secondary mb-2">Submit</button>
+</form>
+<br>
+<form id="toggle-charging-form" method="post">
+    {% csrf_token %}
+    <button id="btn-toggle-charging" type="submit" class="btn btn-primary">Charge</button>
+</form>
+<hr>
+<h4>Messages</h4>
+<div class="table-responsive"></div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Topic</th>
+                <th>Payload</th>
+                <th>QOS</th>
+                <th>Retained</th>
+            </tr>
+        </thead>
+        <tbody id="messages-table">
+        </tbody>
+    </table>
 </div>
 
 
@@ -85,6 +81,8 @@ else{
 //<script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
 </script>
 
+<script type="text/javascript" src="{% static '/js/makeId.js' %}" defer></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
 <script type="text/javascript" src="{% static '/js/mqtt.js' %}" defer></script>
+<script type="text/javascript" src="{% static '/js/changeCar.js' %}" defer></script>
 {% endblock %}
