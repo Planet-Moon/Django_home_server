@@ -12,18 +12,25 @@ def get_free_cars():
     return free_cars
 
 class CarForm(forms.Form):
-    change_car = forms.ModelChoiceField(queryset=Car.objects.all().order_by(Lower('title').asc())) # case insensitive, alphabetic order
-    charger = forms.CharField(widget=forms.HiddenInput())
+    change_car = forms.ModelChoiceField(
+        queryset=Car.objects.all().order_by(Lower('title').asc()),  # case insensitive, alphabetic order
+        empty_label=None,
+        required=False,
+        widget=forms.Select(attrs={
+            "id":"car_selected",
+            "onchange":"changeCar();",
+            "class":"ml-sm-2"})) # this.form.submit()
     # def __init__(self, charger=None, *args, **kwargs):
     #     super(CarForm, self).__init__(*args, **kwargs)
     #     self.fields["charger"] = forms.CharField(widget=forms.TextInput(), empty_value="charger.title")
     pass
 
-class TestForm(forms.Form):
-    text = forms.CharField(widget=forms.TextInput(attrs={
+class PublishForm(forms.Form):
+    publish_someting = forms.CharField(widget=forms.TextInput(attrs={
                 'id': 'test-text',
+                'class':'mb-2 ml-sm-2 mr-sm-2',
                 'required': True,
-                'placeholder': 'Publish something...'}))
+                'placeholder': 'Topic Payload'}))
 
 # To make values default do this in views.py:
 #
