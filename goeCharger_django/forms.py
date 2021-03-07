@@ -17,7 +17,7 @@ class CarForm(forms.Form):
         empty_label=None,
         required=False,
         widget=forms.Select(attrs={
-            "id":"car_selected",
+            "id":"carSelected",
             "onchange":"changeCar();",
             "class":"ml-sm-2"})) # this.form.submit()
     # def __init__(self, charger=None, *args, **kwargs):
