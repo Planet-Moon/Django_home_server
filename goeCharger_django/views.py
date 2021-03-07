@@ -33,14 +33,15 @@ if "runserver" in sys.argv:
             if len(topics) < 4:
                 return
             if topics[3] == "command":
-                if topics[4] == "change_car":
+                if topics[4] == "car_selected":
                     charger = GoeCharger_model.objects.get(title=topics[2])
                     try:
                         change_car = Car.objects.get(title=payload)
                     except:
                         return
                     charger.car_selected = change_car
-                    charger.save()
+                    with database_semaphore:
+                        charger.save()
                     self.client.publish("/".join(topics[:-1])+"/min-amp",charger.car_selected.power_min,qos=0,retain=False)
                     self.client.publish("/".join(topics[:-2])+"/status/car_selected",charger.car_selected.title,qos=0,retain=True)
                 pass
@@ -64,10 +65,12 @@ if "runserver" in sys.argv:
             charger.save()
     reset_running()
 
+    database_semaphore = threading.Semaphore()
+
     class GoeCharger_thread(threading.Thread):
         def __init__(self, goeCharger):
             self.goeCharger = goeCharger
-            threading.Thread.__init__(self)
+            threading.Thread.__init__(self, name=goeCharger.name+"_thread")
 
         def run(self):
             # self.goeCharger.stop_loop()
