@@ -29,7 +29,7 @@ class GoeCharger(models.Model):
     ipAddress = models.GenericIPAddressField()
     power_max = models.IntegerField()
     power_min = models.IntegerField()
-    connected_car = models.ForeignKey(Car, on_delete=models.CASCADE)
+    car_selected = models.ForeignKey(Car, on_delete=models.CASCADE)
     created_on = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
     thread_running = models.BooleanField(default=False)

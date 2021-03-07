@@ -37,10 +37,10 @@ class Server_MQttClient(object):
                     change_car = Car.objects.get(title=payload)
                 except:
                     return
-                charger.connected_car = change_car
+                charger.car_selected = change_car
                 charger.save()
-                self.client.publish("/".join(topics[:-1])+"/min-amp",charger.connected_car.power_min,qos=0,retain=False)
-                self.client.publish("/".join(topics[:-2])+"/status/connected_car",charger.connected_car.title,qos=0,retain=True)
+                self.client.publish("/".join(topics[:-1])+"/min-amp",charger.car_selected.power_min,qos=0,retain=False)
+                self.client.publish("/".join(topics[:-2])+"/status/car_selected",charger.car_selected.title,qos=0,retain=True)
             pass
         else:
             pass
@@ -92,8 +92,8 @@ def create_goe_instances():
         goe_chargers_instances.append(goe_charger_instance)
         GoeCharger_thread(goe_charger_instance).start()
         charger_topic = "home_test_server/goe_charger/"+charger.title
-        server_mqtt.client.publish(charger_topic+"/status/connected_car",payload=charger.connected_car.title,qos=0,retain=True)
-        server_mqtt.client.publish(charger_topic+"/command/min-amp",payload=charger.connected_car.power_min,qos=0,retain=False)
+        server_mqtt.client.publish(charger_topic+"/status/car_selected",payload=charger.car_selected.title,qos=0,retain=True)
+        server_mqtt.client.publish(charger_topic+"/command/min-amp",payload=charger.car_selected.power_min,qos=0,retain=False)
         time.sleep(1)
 create_goe_instances()
 
@@ -123,7 +123,7 @@ def cars_index(request):
 
 def car_detail(request,title):
     car = Car.objects.get(title=title)
-    connected_chargers = GoeCharger_model.objects.filter(connected_car=car)
+    connected_chargers = GoeCharger_model.objects.filter(car_selected=car)
     return render(request, "car_detail.html", context={"car": car, "connected_chargers": connected_chargers})
 
 def car_category(request,category):
@@ -136,7 +136,7 @@ def car_category(request,category):
 
 def goe_charger_detail(request,title):
     goe_charger = GoeCharger_model.objects.get(title=title)
-    car = Car.objects.get(pk=goe_charger.connected_car.pk)
+    car = Car.objects.get(pk=goe_charger.car_selected.pk)
 
 
     initial_form = {"change_car": car.pk}
@@ -145,7 +145,7 @@ def goe_charger_detail(request,title):
         car_form = CarForm(request.POST)
         if car_form.is_valid():
             data = car_form.cleaned_data
-            goe_charger.connected_car = data["change_car"]
+            goe_charger.car_selected = data["change_car"]
             goe_charger.save()
 
     publish_form = PublishForm()

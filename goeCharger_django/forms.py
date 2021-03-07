@@ -7,7 +7,7 @@ def get_free_cars():
     chargers = GoeCharger.objects.all()
     taken_cars = []
     for i in chargers:
-        taken_cars.append(i.connected_car)
+        taken_cars.append(i.car_selected)
     free_cars = [x for x in cars if x not in taken_cars]
     return free_cars
 

@@ -99,8 +99,8 @@ function onMessageArrived(message) {
             return
         }
         else if(charger_http_connected){
-            if(p_Name == "connected_car"){
-                $("#connected_car").html("Connected car: <a href=\"../../car/"+p_Value+"\">"+p_Value+"</a>");
+            if(p_Name == "car_selected"){
+                $("#car_selected").html("Selected car: <a href=\"../../car/"+p_Value+"\">"+p_Value+"</a>");
                 return
             }
             else if(p_Name == "car"){
