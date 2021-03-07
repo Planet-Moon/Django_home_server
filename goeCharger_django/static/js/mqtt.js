@@ -93,6 +93,7 @@ function onMessageArrived(message) {
                 $("#nrg").html("");
                 $("#alw").html("");
                 $("#min-amp").html("");
+                $("#control-mode").html("");
                 $("#btn-toggle-charging").prop("disabled", true);
                 $("#btn-test-text").prop("disabled", true);
             }
@@ -141,19 +142,24 @@ function onMessageArrived(message) {
                 $("#min-amp").html("I<sub>min</sub>: " + p_Value + " <i>A</i>");
                 return
             }
+            else if (p_Name == "control-mode"){
+                $("#control-mode").html("Control Mode: " + p_Value);
+                return
+            }
         }
     }
     return
 };
 
 $(document).ready(() => {
-    var counter = 0;
+    /*var counter = 0;
     setInterval(() => {
         if(mqttClient.isConnected()){
             // mqttClient.send(topic+"/subtopic", String(counter), qos=0, retained=true);
             // counter++;
         }
     }, 10000)
+    */
 });
 
 $('#custom-publish-form').on('submit', event => {
