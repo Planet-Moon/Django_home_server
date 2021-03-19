@@ -15,6 +15,9 @@ logger = logging.getLogger(__name__)
 
 if "runserver" in sys.argv:
     import paho.mqtt.client as mqtt
+
+    goe_charger_instances = dict()
+
     class Server_MQttClient(object):
         def __init__(self):
             self.server_topic = "home_test_server"
@@ -29,7 +32,7 @@ if "runserver" in sys.argv:
             topic = msg.topic
             topics = topic.split("/")
             payload = msg.payload.decode("utf-8")
-            logger.info(topic + ": " + payload)
+            # logger.info(topic + ": " + payload)
             if len(topics) < 4:
                 return
             if topics[3] == "command":
@@ -42,14 +45,18 @@ if "runserver" in sys.argv:
                     charger.car_selected = change_car
                     with database_semaphore:
                         charger.save()
-                    self.client.publish("/".join(topics[:-1])+"/min-amp",charger.car_selected.power_min,qos=0,retain=False)
-                    self.client.publish("/".join(topics[:-2])+"/status/car_selected",charger.car_selected.title,qos=0,retain=True)
+                    self.client.publish("/".join(topics[:-1])+"/min-amp",charger.car_selected.power_min,qos=0,retain=False) # set min amp to new selected car
+                    self.client.publish("/".join(topics[:-2])+"/status/car_selected",charger.car_selected.title,qos=0,retain=True) # set status to new selected car
+
+                    # set amp to min-amp of new selected car if amp is lower
+                    if int(goe_charger_instances[charger.title].amp) < charger.car_selected.power_min:
+                        self.client.publish("/".join(topics[:-1])+"/amp",charger.car_selected.power_min,qos=0,retain=False)
                 pass
             else:
                 pass
 
         def onMQTTConnect(self, client, userdata, flags, rc):
-            logger.info(str(client)+"Connected with result code "+str(rc))
+            logger.info(str(client)+" server mqtt connected with result code "+str(rc))
             self.client.subscribe(self.server_topic+"/#")
             self.client.subscribe("$SYS/broker/clients/connected")
 
@@ -84,9 +91,9 @@ if "runserver" in sys.argv:
                     charger.save()
                     self.goeCharger.start_loop()
 
-    goe_chargers_instances = []
     def create_goe_instances():
         chargers = GoeCharger_model.objects.all()
+        _goe_charger_instances = dict()
         for charger in chargers:
             goe_charger_instance = goeCharger(
                 name=charger.title,
@@ -94,13 +101,15 @@ if "runserver" in sys.argv:
                 mqtt_topic="home_test_server/goe_charger/"+charger.title,
                 mqtt_broker="192.168.178.107",
                 mqtt_port=1883)
-            goe_chargers_instances.append(goe_charger_instance)
+            _goe_charger_instances[charger.title] = goe_charger_instance
             GoeCharger_thread(goe_charger_instance).start()
             charger_topic = "home_test_server/goe_charger/"+charger.title
             server_mqtt.client.publish(charger_topic+"/status/car_selected",payload=charger.car_selected.title,qos=0,retain=True)
             server_mqtt.client.publish(charger_topic+"/command/min-amp",payload=charger.car_selected.power_min,qos=0,retain=False)
             time.sleep(1)
-    create_goe_instances()
+        return _goe_charger_instances
+    goe_charger_instances = create_goe_instances()
+    logger.info(goe_charger_instances)
 
 
 def goe_charger_index(request):
