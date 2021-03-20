@@ -146,6 +146,10 @@ function onMessageArrived(message) {
                 $("#control-mode").html("Control Mode: " + p_Value);
                 return
             }
+            else if (p_Name == "update-time"){
+                $("#update-time").html(p_Value);
+                return
+            }
         }
     }
     return

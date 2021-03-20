@@ -7,6 +7,7 @@
 <small>
     IP: {{ charger.ipAddress }} |
     {{ charger.created_on.date }} |&nbsp;
+    Last updated: <span id="update-time">n.d.</span>&nbsp;|&nbsp;
     Categories:&nbsp;
     {% for category in charger.categories.all %}
     <a href="{% url 'goe_charger_category' category.name %}">
