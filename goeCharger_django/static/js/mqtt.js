@@ -150,6 +150,10 @@ function onMessageArrived(message) {
                 $("#update-time").html(p_Value);
                 return
             }
+            else if (p_Name == "control-status"){
+                $("#control-status").html(p_Value);
+                return
+            }
         }
     }
     return
