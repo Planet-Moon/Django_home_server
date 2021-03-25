@@ -26,6 +26,15 @@ SECRET_KEY = secret_key.SECRET_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'core.handlers': {
+        'level': 'DEBUG',
+        'handlers': ['console']
+    }
+}
+
 ALLOWED_HOSTS = [
   'localhost',
   '127.0.0.1',
