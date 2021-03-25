@@ -35,6 +35,8 @@ if "runserver" in sys.argv:
             # logger.info(topic + ": " + payload)
             if len(topics) < 4:
                 return
+            if topics[0] == "$SYS":
+                logger.debug(topic + ": "+payload)
             if topics[3] == "command":
                 if topics[4] == "car_selected":
                     charger = GoeCharger_model.objects.get(title=topics[2])
@@ -59,6 +61,8 @@ if "runserver" in sys.argv:
             logger.info(str(client)+" server mqtt connected with result code "+str(rc))
             self.client.subscribe(self.server_topic+"/#")
             self.client.subscribe("$SYS/broker/clients/connected")
+            self.client.subscribe("$SYS/broker/messages/inflight")
+            self.client.subscribe("$SYS/broker/load/connections/+")
 
         def onMQTTPublish(self, client, userdata, mid):
             pass
@@ -80,8 +84,6 @@ if "runserver" in sys.argv:
             threading.Thread.__init__(self, name=goeCharger.name+"_thread")
 
         def run(self):
-            # self.goeCharger.stop_loop()
-            ipAddress = self.goeCharger.address.replace("http://","")
             charger = GoeCharger_model.objects.get(title=self.goeCharger.name)
             logging.info("charger: "+str(charger))
             if charger:
