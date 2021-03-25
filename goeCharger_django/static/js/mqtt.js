@@ -22,7 +22,7 @@ class messagesHandle{
 var host = "192.168.178.107";
 var port = 9002
 var path = ""
-var clientID = "goe_client"+makeid(5);
+var clientID = "browser_client_"+makeid(5);
 var topic = "home_test_server/goe_charger/"+charger_name;
 var mqttClient = new Paho.MQTT.Client(host,port,path,clientID);
 
