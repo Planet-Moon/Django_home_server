@@ -58,7 +58,6 @@ def main():
     plt.plot(time,controller_output)
     plt.title("Controller Output")
     plt.show()
-    print(leistungen)
 
 if __name__ == '__main__':
     main()
