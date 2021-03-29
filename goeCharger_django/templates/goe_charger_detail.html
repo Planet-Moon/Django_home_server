@@ -27,6 +27,7 @@
 <h5 id="min-amp">I<sub>min</sub>: </h5>
 <h5 id="control-mode">Control mode: </h5>
 <h5 id="control-status">Control state: </h5>
+<h5 id="solar-ratio-status">Solar ratio: </h5>
 <hr>
 <h3>Configuration</h3>
 {% comment %}
@@ -53,6 +54,14 @@
         <option value="solar">Solar</option>
     </select>
 </form>
+<br>
+<form id="solar-ratio-form" class="form-inline"  action="#" method="post">
+    {% csrf_token %}
+    <label or="solar-ratio-input">Change solar ratio</label>
+    <input id="solar-ratio-input" class="mb-2 ml-sm-2 mr-sm-2 textinput textInput form-control" type="number" name="solar ratio [%]" required="" placeholder="100">
+    <button id="btn-test-text" type="submit" class="btn btn-secondary mb-2">Submit</button>
+</form>
+<br>
 <hr>
 <h4>Messages</h4>
 <div class="table-responsive"></div>

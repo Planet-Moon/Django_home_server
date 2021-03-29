@@ -146,9 +146,11 @@ function onMessageArrived(message) {
                 $("#control-mode").html("Control Mode: " + p_Value);
                 if(p_Value==="solar"){
                     $("#control-status").removeClass("text-muted")
+                    $("#solar-ratio-status").removeClass("text-muted")
                 }
                 else{
                     $("#control-status").addClass("text-muted")
+                    $("#solar-ratio-status").addClass("text-muted")
                 }
                 return
             }
@@ -158,6 +160,10 @@ function onMessageArrived(message) {
             }
             else if (p_Name == "update-time"){
                 $("#update-time").html(p_Value);
+                return
+            }
+            else if (p_Name == "solar-ratio"){
+                $("#solar-ratio-status").html("Solar ratio: "+p_Value+" %");
                 return
             }
         }
@@ -198,4 +204,11 @@ $('#toggle-charging-form').on('submit', event => {
     if(mqttClient.isConnected()){
         mqttClient.send(topic+"/command/alw", args, qos=0, retained=false)
     }
+});
+
+$('#solar-ratio-form').on('submit', event => {
+    event.preventDefault();
+    solarRatio = $('#solar-ratio-input').val();
+    console.log("solar-ratio "+solarRatio+" submitted!")
+    mqttClient.send(topic+"/command/solar-ratio", solarRatio, qos=0, retained=false)
 });
