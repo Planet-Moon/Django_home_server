@@ -28,14 +28,15 @@ class Inverter:
         self.leistung = Leistung(values)
 
 class Controller:
-    def __init__(self):
+    def __init__(self, solar_share=0.5):
         self.alw = False
         self.amp = 0
         self.min_amp = 6
+        self.solar_share = solar_share
 
     def update_controller(self, input:float):
         input = input - self.amp * 3*230 # aktuell genutzte leistung
-        input_amp = self.amp + (input/(3*230))
+        input_amp = self.amp + (input/(3*230*self.solar_share))
         if input_amp > self.min_amp:
             self.amp = input_amp
             self.alw = True
@@ -111,8 +112,9 @@ def main():
     solar_share = 0.5
     netz_delta_power = (data.get('Netzeinspeisung')-data.get('Netzbezug'))/solar_share
 
-    controller = Controller()
+    controller = Controller(solar_share=0.5)
     controller_output = [controller.update_controller(i) for i in netz_delta_power]
+    netz_delta_power = netz_delta_power/0.5
     begin_date = datetime.datetime(2021,3,26,0)
     time = np.array([begin_date + datetime.timedelta(hours=i) for i in range(samples)])
     time = data.get("time")
