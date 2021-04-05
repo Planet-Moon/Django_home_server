@@ -32,13 +32,17 @@ class Controller:
         self.alw = False
         self.amp = 0
         self.min_amp = 6
+        self.max_amp = 20
         self.solar_share = solar_share
 
     def update_controller(self, input:float):
         input = input - self.amp * 3*230 # aktuell genutzte leistung
         input_amp = self.amp + (input/(3*230*self.solar_share))
         if input_amp > self.min_amp:
-            self.amp = input_amp
+            if input_amp < self.max_amp:
+                self.amp = input_amp
+            else:
+                self.amp = self.max_amp
             self.alw = True
         else:
             self.amp = 0
@@ -107,20 +111,20 @@ def main():
     samples = 24*3
     inverter = Inverter(samples)
     netz_delta_power = np.array([i for i in inverter.leistung])
-
-    data = read_csv_logs()
-    solar_share = 0.5
-    netz_delta_power = (data.get('Netzeinspeisung')-data.get('Netzbezug'))/solar_share
-
-    controller = Controller(solar_share=0.5)
-    controller_output = [controller.update_controller(i) for i in netz_delta_power]
-    netz_delta_power = netz_delta_power/0.5
     begin_date = datetime.datetime(2021,3,26,0)
     time = np.array([begin_date + datetime.timedelta(hours=i) for i in range(samples)])
+
+    data = read_csv_logs()
+    solar_share = 0.2
+    netz_delta_power = (data.get('Netzeinspeisung') - data.get('Netzbezug'))/solar_share
     time = data.get("time")
+    verbrauch = data.get("Gesamtverbrauch")
+
+    controller = Controller(solar_share=1)
+    controller_output = [controller.update_controller(i) for i in netz_delta_power]
 
 
-    plt.subplot(2,1,1)
+    plt.subplot(3,1,1)
     plt.plot(time,netz_delta_power)
     plt.plot(time,data.get("PV-Erzeugung"))
     plt.plot(time,data.get("Direktverbrauch"))
@@ -128,10 +132,13 @@ def main():
         trigger_line = i*690*np.ones(time.size)
         plt.plot(time,trigger_line,"-.")
     plt.title("PV-Erzeugung")
-    plt.legend(["Netzeinspeisung","PV-Erzeugung","Direktverbrauch"])
-    plt.subplot(2,1,2)
+    plt.legend(["netz_delta_power","PV-Erzeugung","Direktverbrauch"])
+    plt.subplot(3,1,2)
     plt.plot(time,controller_output)
     plt.title("Controller Output")
+    plt.subplot(3,1,3)
+    plt.plot(time,verbrauch)
+    plt.title("Verbrauch")
     plt.show()
 
 if __name__ == '__main__':
