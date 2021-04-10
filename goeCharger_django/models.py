@@ -34,3 +34,11 @@ class GoeCharger(models.Model):
     last_modified = models.DateTimeField(auto_now=True)
     thread_running = models.BooleanField(default=False)
     categories = models.ManyToManyField('Charger_Category', related_name='goe_chargers')
+
+class GoeChargerDailyLog(models.Model):
+    def __str__(self):
+        return self.goeCharger
+    goeCharger = models.ForeignKey(GoeCharger, on_delete=models.CASCADE)
+    variable = models.CharField(max_length=30)
+    value = models.CharField(max_length=30)
+    time = models.DateTimeField(auto_now_add=True)

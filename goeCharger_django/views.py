@@ -1,8 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
+from django.core import serializers
+from django.utils import timezone
 from goeCharger_django.models import GoeCharger as GoeCharger_model
 from goeCharger_django.models import Car
 from goeCharger import GOE_Charger as goeCharger
+from goeCharger_django.models import GoeChargerDailyLog
 from goeCharger_django.forms import CarForm, PublishForm
 
 
@@ -10,6 +13,7 @@ import logging
 import threading
 import time
 import sys
+import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +41,7 @@ if "runserver" in sys.argv:
                 return
             if topics[0] == "$SYS":
                 logger.debug(topic + ": "+payload)
-            if topics[3] == "command":
+            elif topics[3] == "command":
                 if topics[4] == "car_selected":
                     charger = GoeCharger_model.objects.get(title=topics[2])
                     try:
@@ -53,9 +57,16 @@ if "runserver" in sys.argv:
                     # set amp to min-amp of new selected car if amp is lower
                     if int(goe_charger_instances[charger.title].amp) < charger.car_selected.power_min:
                         self.client.publish("/".join(topics[:-1])+"/amp",charger.car_selected.power_min,qos=0,retain=False)
-                pass
-            else:
-                pass
+            elif topics[3] == "status":
+                if GoeChargerDailyLog.objects.count():
+                    delete_records = GoeChargerDailyLog.objects.exclude(time__range=[timezone.now() - datetime.timedelta(minutes=1), timezone.now()])
+                    delete_records.delete()
+                new_log_record = GoeChargerDailyLog()
+                new_log_record.goeCharger = GoeCharger_model.objects.get(title=topics[2])
+                new_log_record.variable = topics[4]
+                new_log_record.value = payload
+                new_log_record.save()
+
 
         def onMQTTConnect(self, client, userdata, flags, rc):
             logger.info(str(client)+" server mqtt connected with result code "+str(rc))
@@ -168,3 +179,25 @@ def goe_charger_detail(request,title):
 
     context = {"charger":goe_charger, "car_form":car_form, "publish_form":publish_form}
     return render(request, 'goe_charger_detail.html', context)
+
+def goe_charger_log(request,charger_title):
+    goe_charger = GoeCharger_model.objects.get(title=charger_title)
+    data = list(GoeChargerDailyLog.objects.filter(goeCharger=goe_charger).values())
+    result_data = dict()
+    for i in range(len(data)):
+        del data[i]["goeCharger_id"]
+        del data[i]["id"]
+        try:
+            result_data[data[i]["variable"]].append({"value":[data[i]["value"]],"time":data[i]["time"]})
+        except:
+            result_data[data[i]["variable"]] = [{"value":data[i]["value"],"time":data[i]["time"]}]
+    return JsonResponse(result_data, safe=False)
+
+def goe_charger_log_variable(request,charger_title,variable):
+    goe_charger = GoeCharger_model.objects.get(title=charger_title)
+    data = list(GoeChargerDailyLog.objects.filter(goeCharger=goe_charger).filter(variable=variable).values())
+    result = []
+    for i in range(len(data)):
+        result.append({"value": data[i]["value"], "time": data[i]["time"].strftime("%Y-%m-%dT%H:%M:%S")})
+    del data
+    return JsonResponse(result, safe=False)

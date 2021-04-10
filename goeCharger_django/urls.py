@@ -8,4 +8,6 @@ urlpatterns = [
     path('carcategory/<category>/', views.car_category, name='car_category'),
     path('charger/<title>/', views.goe_charger_detail, name='goe_charger_detail'),
     path('chargercategory/<category>/', views.goe_charger_category, name='goe_charger_category'),
+    path('chargerlog/<charger_title>/', views.goe_charger_log, name='goe_charger_log'),
+    path('chargerlog/<charger_title>/<variable>', views.goe_charger_log_variable, name='goe_charger_log_variable'),
 ]

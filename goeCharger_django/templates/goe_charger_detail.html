@@ -18,50 +18,68 @@
 <hr>
 <p id="car_selected">Selected car: None <a href="#">Info</a></p>
 <hr>
-<h3>Status</h3>
-<h5 id="httpc"></h5>
-<h5 id="car">Car status: </h5>
-<h5 id="amp">I: <i>A</i></h5>
-<h5 id="nrg">P: <i>W</i></h5>
-<h5 id="alw">Charging status: </h5>
-<h5 id="min-amp">I<sub>min</sub>: </h5>
-<h5 id="control-mode">Control mode: </h5>
-<h5 id="control-status">Control state: </h5>
-<h5 id="solar-ratio-status">Solar ratio: </h5>
+<div class="row">
+    <div class="col-md-6">
+        <h3>Status</h3>
+        <h5 id="httpc"></h5>
+        <h5 id="car">Car status: </h5>
+        <h5 id="amp">I: <i>A</i></h5>
+        <h5 id="nrg">P: <i>W</i></h5>
+        <h5 id="alw">Charging status: </h5>
+        <h5 id="min-amp">I<sub>min</sub>: </h5>
+        <h5 id="control-mode">Control mode: </h5>
+        <h5 id="control-status">Control state: </h5>
+        <h5 id="solar-ratio-status">Solar ratio: </h5>
+    </div>
+    <div class="col-md-6">
+        <h3>Configuration</h3>
+        {% comment %}
+        {% url 'goe_charger_detail' charger.title %}
+        {% endcomment %}
+        <form  id="change-car-form" class="form-inline" action="#" method="post">
+            {% csrf_token %}
+            {{car_form|crispy}}
+        </form>
+        <br>
+        <form id="custom-publish-form" class="form-inline"  action="#" method="post">
+            {% csrf_token %}
+            {{publish_form|crispy}}
+            <button id="btn-test-text" type="submit" class="btn btn-secondary mb-2">Submit</button>
+        </form>
+        <br>
+        <form id="toggle-charging-form" class="form-inline"  action="#" method="post">
+            {% csrf_token %}
+            <button id="btn-toggle-charging" type="submit" class="btn btn-primary">Charge</button>
+            <label for="control-mode-select" class="ml-sm-2">Control Mode</label>
+            <select id="control-mode-select" class="ml-sm-2 select form-control" name="control-mode-select" onchange="changeControlMode();">
+                <option value="on">On</option>
+                <option value="off" selected>Off</option>
+                <option value="solar">Solar</option>
+            </select>
+        </form>
+        <br>
+        <form id="solar-ratio-form" class="form-inline"  action="#" method="post">
+            {% csrf_token %}
+            <label or="solar-ratio-input">Change solar ratio</label>
+            <input id="solar-ratio-input" class="mb-2 ml-sm-2 mr-sm-2 textinput textInput form-control" type="number" name="solar ratio [%]" required="" placeholder="100">
+            <button id="btn-test-text" type="submit" class="btn btn-secondary mb-2">Submit</button>
+        </form>
+    </div>
+</div>
+<br>
 <hr>
-<h3>Configuration</h3>
-{% comment %}
-{% url 'goe_charger_detail' charger.title %}
-{% endcomment %}
-<form  id="change-car-form" class="form-inline" action="#" method="post">
-    {% csrf_token %}
-    {{car_form|crispy}}
-</form>
-<br>
-<form id="custom-publish-form" class="form-inline"  action="#" method="post">
-    {% csrf_token %}
-    {{publish_form|crispy}}
-    <button id="btn-test-text" type="submit" class="btn btn-secondary mb-2">Submit</button>
-</form>
-<br>
-<form id="toggle-charging-form" class="form-inline"  action="#" method="post">
-    {% csrf_token %}
-    <button id="btn-toggle-charging" type="submit" class="btn btn-primary">Charge</button>
-    <label for="control-mode-select" class="ml-sm-2">Control Mode</label>
-    <select id="control-mode-select" class="ml-sm-2 select form-control" name="control-mode-select" onchange="changeControlMode();">
-        <option value="on">On</option>
-        <option value="off" selected>Off</option>
-        <option value="solar">Solar</option>
-    </select>
-</form>
-<br>
-<form id="solar-ratio-form" class="form-inline"  action="#" method="post">
-    {% csrf_token %}
-    <label or="solar-ratio-input">Change solar ratio</label>
-    <input id="solar-ratio-input" class="mb-2 ml-sm-2 mr-sm-2 textinput textInput form-control" type="number" name="solar ratio [%]" required="" placeholder="100">
-    <button id="btn-test-text" type="submit" class="btn btn-secondary mb-2">Submit</button>
-</form>
-<br>
+<div class="row">
+    <div class="col-md-5 border rounded mr-4">
+        <canvas id="chartLeft" width="400" height="400"></canvas>
+        <button id="chartLeftZoom" class="btn btn-secondary mb-2" type="button">Zoom</button>
+        <button id="chartLeftPan" class="btn btn-secondary mb-2" type="button">Pan</button>
+        <button id="chartLeftReset" class="btn btn-secondary mb-2" type="button">Reset</button>
+    </div>
+    <div class="col-md-5 border rounded ml-4">
+        <canvas id="chartRight" width="400" height="400"></canvas>
+    </div>
+</div>
+
 <hr>
 <h4>Messages</h4>
 <div class="table-responsive"></div>
@@ -103,4 +121,10 @@
 <script type="text/javascript" src="{% static '/js/mqtt.js' %}" defer></script>
 <script type="text/javascript" src="{% static '/js/changeCar.js' %}" defer></script>
 <script type="text/javascript" src="{% static '/js/changeControlMode.js' %}" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.0.2/chart.min.js" integrity="sha512-dnUg2JxjlVoXHVdSMWDYm2Y5xcIrJg1N+juOuRi0yLVkku/g26rwHwysJDAMwahaDfRpr1AxFz43ktuMPr/l1A==" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@next"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@0.1.1"></script>
+<script type="text/javascript" src="{% static '/js/my_chart.js' %}" defer></script>
 {% endblock %}

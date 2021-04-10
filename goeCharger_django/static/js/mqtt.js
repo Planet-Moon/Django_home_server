@@ -42,7 +42,7 @@ mqttClient.connect({
 // called when the client connects
 function onConnect() {
     // Once a connection has been made, make a subscription and send a message.
-    console.log("onConnect");
+    //console.log("onConnect");
     mqttClient.subscribe(topic+"/#");
     payload = "Client connected successfully";
     mqttClient.send(topic, payload, qos=0, retained=false);
@@ -57,7 +57,7 @@ function onConnectionLost(responseObject) {
 
 // called when a message arrives
 function onMessageArrived(message) {
-    console.log("onMessageArrived: "+message.destinationName+" "+message.payloadString+" "+message.qos+" "+message.retained);
+    //console.log("onMessageArrived: "+message.destinationName+" "+message.payloadString+" "+message.qos+" "+message.retained);
     Messages.addMessage(message);
     $("#messages-table").html("")
     Messages.messages.forEach( element => {
@@ -185,7 +185,7 @@ $(document).ready(() => {
 $('#custom-publish-form').on('submit', event => {
     event.preventDefault();
     input_text = $('#test-text').val();
-    console.log("text ("+input_text+") submitted!");
+    //console.log("text ("+input_text+") submitted!");
     text = input_text.split(" ");
     payloadString = text.slice(1).join(" ")
     if(text.length > 1){
@@ -209,6 +209,6 @@ $('#toggle-charging-form').on('submit', event => {
 $('#solar-ratio-form').on('submit', event => {
     event.preventDefault();
     solarRatio = $('#solar-ratio-input').val();
-    console.log("solar-ratio "+solarRatio+" submitted!")
+    //console.log("solar-ratio "+solarRatio+" submitted!")
     mqttClient.send(topic+"/command/solar-ratio", solarRatio, qos=0, retained=false)
 });
