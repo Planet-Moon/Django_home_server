@@ -1,6 +1,8 @@
 var chartLeftData = [];
-var chartLeftLabels = [];
+var chartRightData = [];
+var timeLabels = [];
 var ctxLeft = $('#chartLeft');
+var ctxRight = $('#chartRight');
 var chartOptions = {
     responsive: true,
     legend: {
@@ -45,10 +47,11 @@ var chartOptions = {
     pan: {enabled: false,mode: 'xy',rangeMin: {x: null,y: null},rangeMax: {x: null,y: null}},
     zoom: {enabled: true,drag: true,mode: 'xy',rangeMin: {x: null,y: null},rangeMax: {x: null,y: null}},
 }
+
 var myLeftChart = new Chart(ctxLeft, {
     type: 'line',
     data: {
-        labels: chartLeftLabels,
+        labels: timeLabels,
         datasets: [
             {
                 label: "power delta [W]",
@@ -68,8 +71,27 @@ var myLeftChart = new Chart(ctxLeft, {
     options: chartOptions
 });
 
-$(document).ready(() => {
-    updateChart();
+var myRightChart = new Chart(ctxRight, {
+    type: 'line',
+    data: {
+        labels: timeLabels,
+        datasets: [
+            {
+                label: "power setpoint [W]",
+                data: chartLeftData,
+                fill: false,
+                borderColor:"red",
+                backgroundColor:"transparent",
+                borderWidth: 1,
+                spanGaps: false,
+                tooltips: {
+                    enabled: false
+                }
+
+            }
+        ]
+    },
+    options: chartOptions
 });
 
 $("#chartLeftPan").click(() => {
@@ -86,8 +108,22 @@ $("#chartLeftReset").click(() => {
     myLeftChart.resetZoom()
 });
 
+$("#chartRightPan").click(() => {
+    myRightChart.options.zoom.enabled = false;
+    myRightChart.options.zoom.pan = true;
+});
+
+$("#chartRightZoom").click(() => {
+    myRightChart.options.zoom.enabled = true;
+    myRightChart.options.zoom.pan = false;
+});
+
+$("#chartRightReset").click(() => {
+    myRightChart.resetZoom()
+});
+
 function readDataFromDB() {
-    data = get_data("power-delta", data => {
+    get_data("power-delta", data => {
         myLeftChart.data.datasets[0].data = [];
         myLeftChart.data.labels = [];
         data.forEach((item,index) => {
@@ -95,11 +131,20 @@ function readDataFromDB() {
             myLeftChart.data.datasets[0].data.push(item.value);
         });
     });
+    get_data("power-setpoint", data => {
+        myRightChart.data.datasets[0].data = [];
+        myRightChart.data.labels = [];
+        data.forEach((item,index) => {
+            myRightChart.data.labels.push(new Date(item.time));
+            myRightChart.data.datasets[0].data.push(item.value);
+        });
+    });
 }
 
 function updateChart() {
     readDataFromDB();
     myLeftChart.update();
+    myRightChart.update();
 }
 
 function get_data(variable, callback){
@@ -114,7 +159,9 @@ function get_data(variable, callback){
     });
 }
 
-var data;
-setInterval(() => {
+$(document).ready(() => {
     updateChart();
-}, 10000)
+    setInterval(() => {
+        updateChart();
+    }, 5000)
+});

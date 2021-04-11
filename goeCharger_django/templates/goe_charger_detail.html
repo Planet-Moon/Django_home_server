@@ -77,6 +77,9 @@
     </div>
     <div class="col-md-5 border rounded ml-4">
         <canvas id="chartRight" width="400" height="400"></canvas>
+        <button id="chartRightZoom" class="btn btn-secondary mb-2" type="button">Zoom</button>
+        <button id="chartRightPan" class="btn btn-secondary mb-2" type="button">Pan</button>
+        <button id="chartRightReset" class="btn btn-secondary mb-2" type="button">Reset</button>
     </div>
 </div>
 
@@ -122,7 +125,7 @@
 <script type="text/javascript" src="{% static '/js/changeCar.js' %}" defer></script>
 <script type="text/javascript" src="{% static '/js/changeControlMode.js' %}" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.0.2/chart.min.js" integrity="sha512-dnUg2JxjlVoXHVdSMWDYm2Y5xcIrJg1N+juOuRi0yLVkku/g26rwHwysJDAMwahaDfRpr1AxFz43ktuMPr/l1A==" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js" integrity="sha512-UXumZrZNiOwnTcZSHLOfcTs0aos2MzBWHXOHOuB0J/R44QB0dwY5JgfbvljXcklVf65Gc4El6RjZ+lnwd2az2g==" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@next"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@0.1.1"></script>
