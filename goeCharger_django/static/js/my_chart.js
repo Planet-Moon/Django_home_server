@@ -51,7 +51,7 @@ var myLeftChart = new Chart(ctxLeft, {
         labels: chartLeftLabels,
         datasets: [
             {
-                label: "power delta",
+                label: "power delta [W]",
                 data: chartLeftData,
                 fill: false,
                 borderColor:"blue",
