@@ -198,6 +198,6 @@ def goe_charger_log_variable(request,charger_title,variable):
     data = list(GoeChargerDailyLog.objects.filter(goeCharger=goe_charger).filter(variable=variable).values())
     result = []
     for i in range(len(data)):
-        result.append({"value": data[i]["value"], "time": data[i]["time"].strftime("%Y-%m-%dT%H:%M:%S")})
+        result.append({"value": data[i]["value"], "time": data[i]["time"].strftime("%Y-%m-%dT%H:%M:%SZ")})
     del data
     return JsonResponse(result, safe=False)
