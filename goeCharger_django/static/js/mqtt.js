@@ -142,6 +142,9 @@ function onMessageArrived(message) {
                 $("#min-amp").html("I<sub>min</sub>: " + p_Value + " <i>A</i>");
                 return
             }
+            else if(p_Name == "power-factor"){
+                $("#power-factor").html("Power factor:" + p_Value*100 + " <i>%</i>")
+            }
             else if (p_Name == "control-mode"){
                 $("#control-mode").html("Control Mode: " + p_Value);
                 if(p_Value==="solar"){
