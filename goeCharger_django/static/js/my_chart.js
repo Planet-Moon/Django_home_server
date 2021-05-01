@@ -46,6 +46,9 @@ var chartOptions = {
     },
     pan: {enabled: false,mode: 'xy',rangeMin: {x: null,y: null},rangeMax: {x: null,y: null}},
     zoom: {enabled: true,drag: true,mode: 'xy',rangeMin: {x: null,y: null},rangeMax: {x: null,y: null}},
+    animation: {
+        duration: 0
+    }
 }
 
 var myLeftChart = new Chart(ctxLeft, {
