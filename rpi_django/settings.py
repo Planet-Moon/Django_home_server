@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'crispy_forms',
     'goeCharger_django',
+    'heating_system',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'

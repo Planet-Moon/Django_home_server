@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block page_content %}
+<h1>Heating System</h1>
+<p>Overview</p>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-2">
+            <div class="card-body">
+                <h5 class="card-title">Card Title</h5>
+                <hr>
+                <h6 class="card-subtitle mb-2 text-muted">Device Name</h6>
+                <div class="card-text">
+                    <p>Device Values</p>
+                </div>
+                <small class="card-subtitle mb-2 text-muted">Last change: Last Modified</small>
+                <br>
+                <a href="#" class="btn btn-primary btn-sm">Details Link</a>
+                {% comment %}
+                <!-- <a href="{% url 'goe_charger_detail' charger.title %}" class="btn btn-primary btn-sm">Details</a>&nbsp; -->
+                {% endcomment %}
+                <p>{{context_item}}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

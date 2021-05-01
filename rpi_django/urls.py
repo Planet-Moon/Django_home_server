@@ -15,8 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('goeCharger_django.urls')),
+    path('', views.home, name='home'),
+    path('goeCharger/', include('goeCharger_django.urls')),
+    path('heatingSystem/', include('heating_system.urls')),
 ]
