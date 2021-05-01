@@ -149,7 +149,7 @@ function updateChart() {
 
 function get_data(variable, callback){
     url = window.location.href.split("/");
-    url[3] = url[3]+"log";
+    url[url.length-2] = url[url.length-2]+"log";
     if(variable){
         url[5] = variable;
     }
