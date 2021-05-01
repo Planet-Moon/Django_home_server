@@ -12,7 +12,7 @@
   <body>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container">
-        <a class="navbar-brand" href="{% url 'goe_charger_index' %}">Rpi Django</a>
+        <a class="navbar-brand" href="{% url 'home' %}">Rpi Django</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -23,7 +23,10 @@
               <a class="nav-link" href="{% url 'goe_charger_index' %}">Goe Charger</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'goe_charger_index' %}">TBD</a>
+              <a class="nav-link" href="{% url 'heating_index' %}">Heating System</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">TBD</a>
             </li>
           </ul>
         </div>
