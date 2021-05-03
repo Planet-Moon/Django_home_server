@@ -143,7 +143,7 @@ function onMessageArrived(message) {
                 return
             }
             else if(p_Name == "power-factor"){
-                $("#power-factor").html("Power factor: " + p_Value*100 + " <i>%</i>")
+                $("#power-factor").html("Power factor: " + p_Value + " <i>%</i>")
             }
             else if (p_Name == "control-mode"){
                 $("#control-mode").html("Control Mode: " + p_Value);
