@@ -59,7 +59,7 @@ if "runserver" in sys.argv:
                         self.client.publish("/".join(topics[:-1])+"/amp",charger.car_selected.power_min,qos=0,retain=False)
             elif topics[3] == "status":
                 if GoeChargerDailyLog.objects.count():
-                    delete_records = GoeChargerDailyLog.objects.exclude(time__range=[timezone.now() - datetime.timedelta(hours=2), timezone.now()])
+                    delete_records = GoeChargerDailyLog.objects.exclude(time__range=[timezone.now() - datetime.timedelta(hours=24), timezone.now()])
                     delete_records.delete()
                 new_log_record = GoeChargerDailyLog()
                 new_log_record.goeCharger = GoeCharger_model.objects.get(title=topics[2])
