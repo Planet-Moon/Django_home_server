@@ -26,7 +26,7 @@ var clientID = "browser_client_"+makeid(5);
 var topic = "home_test_server/goe_charger/"+charger_name;
 var mqttClient = new Paho.MQTT.Client(host,port,path,clientID);
 
-var Messages = new messagesHandle(10);
+var Messages = new messagesHandle(20);
 var charger_http_connected = true;
 var charging_state = undefined;
 
@@ -87,6 +87,7 @@ function onMessageArrived(message) {
             }
             else{
                 charger_http_connected = false;
+                $("#http-error-alert").show()
                 $("#httpc").html("Charger disconnected");
                 $("#car").html("");
                 $("#amp").html("");
@@ -94,10 +95,15 @@ function onMessageArrived(message) {
                 $("#alw").html("");
                 $("#min-amp").html("");
                 $("#control-mode").html("");
+                $("#power-factor").html("");
+                $("#control-status").html("");
+                $("#solar-ratio-status").html("");
                 $("#btn-toggle-charging").prop("disabled", true);
                 $("#btn-test-text").prop("disabled", true);
             }
-            return
+        }
+        else if (p_Name == "http-error"){
+            $("#http-error-description").html(p_Value);
         }
         else if(charger_http_connected){
             if(p_Name == "car_selected"){
@@ -169,12 +175,16 @@ function onMessageArrived(message) {
                 $("#solar-ratio-status").html("Solar ratio: "+p_Value+" %");
                 return
             }
+            else{
+                console.log("unknown property "+p_Name+"with value "+p_Value);
+            }
         }
     }
     return
 };
 
 $(document).ready(() => {
+    $("#http-error-alert").hide();
     /*var counter = 0;
     setInterval(() => {
         if(mqttClient.isConnected()){
