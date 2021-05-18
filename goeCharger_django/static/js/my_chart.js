@@ -16,6 +16,11 @@ var chartOptions = {
         mode: "nearest",
         intersect: true
     },
+    elements: {
+        point: {
+            radius: 0
+        }
+    },
     scales: {
         x: {
             type: 'time',
