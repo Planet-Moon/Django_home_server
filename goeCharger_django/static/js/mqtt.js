@@ -107,7 +107,7 @@ function onMessageArrived(message) {
         }
         else if(charger_http_connected){
             if(p_Name == "car_selected"){
-                $("#car_selected").html("Selected car: <a href=\"../../car/"+p_Value+"\">"+p_Value+"</a>");
+                $("#car_selected").html("Selected car: <a href=\"../car/"+p_Value+"\">"+p_Value+"</a>");
                 return
             }
             else if(p_Name == "car"){
