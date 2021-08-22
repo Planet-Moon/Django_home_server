@@ -31,7 +31,18 @@ LOGGING = {
     'disable_existing_loggers': False,
     'core.handlers': {
         'level': 'DEBUG',
-        'handlers': ['console']
+        'handlers': ['console'],
+        'formatter': 'verbose'
+    },
+    'formatters': {
+        'verbose': {
+            'format': '{levelname:s} {asctime:s} {module:s} {process:d} {thread:d} {filename:s} {lineno:d} {message:s}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
     }
 }
 
