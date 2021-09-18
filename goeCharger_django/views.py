@@ -137,8 +137,8 @@ if "runserver" in sys.argv:
     power_sources = [battery_manager, SMA_SunnyBoy("192.168.178.128","sunnyboy"), SMA_SunnyBoy("192.168.178.142","sunnyboyCarport")]
     power_sinks = [*goe_charger_instances]
     power_manager = PowerManager(sources=power_sources, sinks=power_sinks)
-    power_manager.power_grid = lambda: storage_boy.LeistungBezug - storage_boy.LeistungEinspeisung
-    power_manager_thread = PowerManagerThread(power_manager,1)
+    power_manager.power_grid = lambda: storage_boy.LeistungBezug # - storage_boy.LeistungEinspeisung
+    power_manager_thread = PowerManagerThread(power_manager,10)
     power_manager_thread.start()
 
 
