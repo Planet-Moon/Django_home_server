@@ -131,7 +131,7 @@ $("#chartRightReset").click(() => {
 });
 
 function readDataFromDB() {
-    get_data("power-delta", data => {
+    get_data("nrg", data => {
         myLeftChart.data.datasets[0].data = [];
         myLeftChart.data.labels = [];
         data.forEach((item,index) => {
@@ -139,7 +139,7 @@ function readDataFromDB() {
             myLeftChart.data.datasets[0].data.push(item.value);
         });
     });
-    get_data("power-setpoint", data => {
+    get_data("http-error", data => {
         myRightChart.data.datasets[0].data = [];
         myRightChart.data.labels = [];
         data.forEach((item,index) => {
