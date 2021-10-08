@@ -95,7 +95,6 @@ function onMessageArrived(message) {
                 $("#min-amp").html("");
                 $("#control-mode").html("");
                 $("#power-factor").html("");
-                $("#control-status").html("");
                 $("#solar-ratio-status").html("");
                 $("#btn-test-text").prop("disabled", true);
             }
@@ -144,17 +143,11 @@ function onMessageArrived(message) {
             else if(p_Name == "control-mode"){
                 $("#control-mode").html("Control Mode: " + p_Value);
                 if(p_Value==="solar"){
-                    $("#control-status").removeClass("text-muted")
                     $("#solar-ratio-status").removeClass("text-muted")
                 }
                 else{
-                    $("#control-status").addClass("text-muted")
                     $("#solar-ratio-status").addClass("text-muted")
                 }
-                return
-            }
-            else if (p_Name == "control-status"){
-                $("#control-status").html("Control state: " + p_Value);
                 return
             }
             else if (p_Name == "update-time"){
