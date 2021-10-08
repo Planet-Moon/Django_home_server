@@ -114,7 +114,7 @@ if "runserver" in sys.argv:
 
     def create_goe_instances():
         chargers = GoeCharger_model.objects.all()
-        _goe_charger_instances = list()
+        _goe_charger_instances = dict()
         for charger in chargers:
             goe_charger_instance = goeCharger(
                 name=charger.title,
@@ -122,7 +122,7 @@ if "runserver" in sys.argv:
                 mqtt_topic="home_test_server/goe_charger/"+charger.title,
                 mqtt_broker="192.168.178.107",
                 mqtt_port=1883)
-            _goe_charger_instances.append(goe_charger_instance)
+            _goe_charger_instances[charger.title] = goe_charger_instance
             GoeCharger_thread(goe_charger_instance).start()
             charger_topic = "home_test_server/goe_charger/"+charger.title
             server_mqtt.client.publish(charger_topic+"/status/car_selected",payload=charger.car_selected.title,qos=0,retain=True)
@@ -135,7 +135,7 @@ if "runserver" in sys.argv:
     storage_boy = SMA_StorageBoy("192.168.178.113")
     battery_manager = BatteryManager(inverters=[storage_boy])
     power_sources = [battery_manager, SMA_SunnyBoy("192.168.178.128","sunnyboy"), SMA_SunnyBoy("192.168.178.142","sunnyboyCarport")]
-    power_sinks = [*goe_charger_instances]
+    power_sinks = [*list(goe_charger_instances.values())]
     power_manager = PowerManager(sources=power_sources, sinks=power_sinks)
     power_manager.power_grid = lambda: storage_boy.LeistungBezug # - storage_boy.LeistungEinspeisung
     power_manager_thread = PowerManagerThread(power_manager,10)
