@@ -28,7 +28,9 @@ var mqttClient = new Paho.MQTT.Client(host,port,path,clientID);
 
 var Messages = new messagesHandle(20);
 var charger_http_connected = true;
-var charging_state = undefined;
+
+var car_connection;
+var alw_setting;
 
 // set callback handlers
 mqttClient.onConnectionLost = onConnectionLost;
@@ -111,9 +113,11 @@ function onMessageArrived(message) {
                 p_Value = parseInt(p_Value);
                 function Car_status(args_){
                     if(args_ > 1){
+                        car_connection = true;
                         return "connected";
                     }
                     else{
+                        car_connection = false;
                         return "not connected";
                     }
                 }
@@ -130,6 +134,7 @@ function onMessageArrived(message) {
                 return
             }
             else if(p_Name == "alw"){
+                alw_setting = p_Value == 'True' ? true : false;
                 $("#alw").html("Charging status: " + p_Value);
                 return
             }
@@ -160,6 +165,14 @@ function onMessageArrived(message) {
             }
             else{
                 console.log("unknown property "+p_Name+"with value "+p_Value);
+            }
+            if(p_Name == "alw" || p_Name == "car"){
+                if(!car_connection && alw_setting){
+                    $("#car-connected-error-alert").show();
+                }
+                else{
+                    $("#car-connected-error-alert").hide();
+                }
             }
         }
     }
