@@ -82,7 +82,6 @@ function onMessageArrived(message) {
             if(p_Value == "True"){
                 charger_http_connected = true;
                 $("#httpc").html("Charger connected");
-                $("#btn-toggle-charging").prop("disabled", false);
                 $("#btn-test-text").prop("disabled", false);
             }
             else{
@@ -98,7 +97,6 @@ function onMessageArrived(message) {
                 $("#power-factor").html("");
                 $("#control-status").html("");
                 $("#solar-ratio-status").html("");
-                $("#btn-toggle-charging").prop("disabled", true);
                 $("#btn-test-text").prop("disabled", true);
             }
         }
@@ -134,14 +132,6 @@ function onMessageArrived(message) {
             }
             else if(p_Name == "alw"){
                 $("#alw").html("Charging status: " + p_Value);
-                if(p_Value==="True"){
-                    charging_state = true;
-                    $("#btn-toggle-charging").html("Stop charging");
-                }
-                else{
-                    charging_state = false;
-                    $("#btn-toggle-charging").html("Charge");
-                }
                 return
             }
             else if(p_Name == "min-amp"){
@@ -151,7 +141,7 @@ function onMessageArrived(message) {
             else if(p_Name == "power-factor"){
                 $("#power-factor").html("Power factor: " + p_Value + " <i>%</i>")
             }
-            else if (p_Name == "control-mode"){
+            else if(p_Name == "control-mode"){
                 $("#control-mode").html("Control Mode: " + p_Value);
                 if(p_Value==="solar"){
                     $("#control-status").removeClass("text-muted")
@@ -203,20 +193,6 @@ $('#custom-publish-form').on('submit', event => {
     payloadString = text.slice(1).join(" ")
     if(text.length > 1){
         mqttClient.send(topic+"/command/"+text[0], payloadString, qos=0, retained=false)}
-});
-
-$('#toggle-charging-form').on('submit', event => {
-    event.preventDefault();
-    var args = undefined;
-    if(charging_state){
-        args = "False";
-    }
-    else{
-        args = "True";
-    }
-    if(mqttClient.isConnected()){
-        mqttClient.send(topic+"/command/alw", args, qos=0, retained=false)
-    }
 });
 
 $('#solar-ratio-form').on('submit', event => {

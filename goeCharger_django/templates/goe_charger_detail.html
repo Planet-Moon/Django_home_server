@@ -53,7 +53,6 @@
         <br>
         <form id="toggle-charging-form" class="form-inline"  action="#" method="post">
             {% csrf_token %}
-            <button id="btn-toggle-charging" type="submit" class="btn btn-primary">Charge</button>
             <label for="control-mode-select" class="ml-sm-2">Control Mode</label>
             <select id="control-mode-select" class="ml-sm-2 select form-control" name="control-mode-select" onchange="changeControlMode();">
                 <option value="on">On</option>
