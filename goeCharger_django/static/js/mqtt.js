@@ -107,7 +107,6 @@ function onMessageArrived(message) {
         else if(charger_http_connected){
             if(p_Name == "car_selected"){
                 $("#car_selected").html("Selected car: <a href=\"../car/"+p_Value+"\">"+p_Value+"</a>");
-                return
             }
             else if(p_Name == "car"){
                 p_Value = parseInt(p_Value);
@@ -123,24 +122,19 @@ function onMessageArrived(message) {
                 }
                 car_status = Car_status(p_Value);
                 $("#car").html("Car status: " + car_status);
-                return
             }
             else if(p_Name == "amp"){
                 $("#amp").html("I: " + p_Value + " <i>A</i>");
-                return
             }
             else if(p_Name == "nrg"){
                 $("#nrg").html("P: " + p_Value + " <i>W</i>");
-                return
             }
             else if(p_Name == "alw"){
                 alw_setting = p_Value == 'True' ? true : false;
                 $("#alw").html("Charging status: " + p_Value);
-                return
             }
             else if(p_Name == "min-amp"){
                 $("#min-amp").html("I<sub>min</sub>: " + p_Value + " <i>A</i>");
-                return
             }
             else if(p_Name == "power-factor"){
                 $("#power-factor").html("Power factor: " + p_Value + " <i>%</i>")
@@ -153,15 +147,12 @@ function onMessageArrived(message) {
                 else{
                     $("#solar-ratio-status").addClass("text-muted")
                 }
-                return
             }
             else if (p_Name == "update-time"){
                 $("#update-time").html(p_Value);
-                return
             }
             else if (p_Name == "solar-ratio"){
                 $("#solar-ratio-status").html("Solar ratio: "+p_Value+" %");
-                return
             }
             else{
                 console.log("unknown property "+p_Name+"with value "+p_Value);
