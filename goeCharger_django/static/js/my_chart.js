@@ -62,7 +62,7 @@ var myLeftChart = new Chart(ctxLeft, {
         labels: timeLabels,
         datasets: [
             {
-                label: "power delta [W]",
+                label: "Charging Power [W]",
                 data: chartLeftData,
                 fill: false,
                 borderColor:"blue",
@@ -85,7 +85,7 @@ var myRightChart = new Chart(ctxRight, {
         labels: timeLabels,
         datasets: [
             {
-                label: "power setpoint [W]",
+                label: "Connection Error",
                 data: chartLeftData,
                 fill: false,
                 borderColor:"red",
